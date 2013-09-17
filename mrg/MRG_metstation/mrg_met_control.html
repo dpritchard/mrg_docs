@@ -1,0 +1,201 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of mrg_met_control</title>
+  <meta name="keywords" content="mrg_met_control">
+  <meta name="description" content="The core Metstation control file">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">mrg</a> &gt; <a href="index.html">MRG_metstation</a> &gt; mrg_met_control.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for mrg\MRG_metstation&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>mrg_met_control
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>The core Metstation control file</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function mrg_met_control(verbosity) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> The core Metstation control file
+
+ This function opens a serial connection and generates an infinite loop
+ that reads incomming data and processes it as required.
+
+ INPUT
+   verbosity   An integer specifying the level of output to the console.
+               This only effects output to screen and has no effect on 
+               the logging to file.
+               0 = No output
+               1 = Minimal output (The default)
+               2 = Outputs every time a string is read
+               3 = Also reports the size of data in the buffer
+
+ OUTPUT
+   This function reports information to the console and to a file named:
+       met_log_yyyy_mmm.txt
+   Where yyyy and mmm are the year and abbreviated month name, repectivly.
+   Other heavy lifting is done by mrg_met_output and further details can
+   be found there.
+
+ REQUIREMENTS
+   Requires mrg_met_test_string and mrg_met_output
+
+ AUTHORS
+   Bjoern Elsaesser
+   Daniel Pritchard
+
+ LICENCE
+   Code distributed as part of the MRG toolbox from the Marine Research
+   Group at Queens Univeristy Belfast (QUB) School of Planning
+   Architecture and Civil Engineering (SPACE). Distributed under a
+   creative commons CC BY-SA licence, retaining full copyright of the
+   original authors.
+
+   http://creativecommons.org/licenses/by-sa/3.0/
+   http://www.qub.ac.uk/space/
+   http://www.qub.ac.uk/research-centres/eerc/
+
+ DEVELOPMENT
+   v 1.0   2010
+           First version. BE.
+   v 2.1   24/01/2012 - DP
+           Removed useless RS232 reset capabilities.
+   v 3.0   August 2013. DP
+           Major re-write.
+           Clean up and document. Move into MRG toolbox.
+
+% Open serial connection</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="mrg_met_output.html" class="code" title="function str = mrg_met_output(out)">mrg_met_output</a>	Write met data to file(s) and upload to a webpage</li><li><a href="mrg_met_pp.html" class="code" title="function mrg_met_pp(days)">mrg_met_pp</a>	Plots metstation data for display by an external web application</li><li><a href="mrg_met_test_string.html" class="code" title="function out = mrg_met_test_string(inp)">mrg_met_test_string</a>	Routine called by mrg_met_control to check the string for real data</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function mrg_met_control(verbosity)</a>
+0002 <span class="comment">% The core Metstation control file</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% This function opens a serial connection and generates an infinite loop</span>
+0005 <span class="comment">% that reads incomming data and processes it as required.</span>
+0006 <span class="comment">%</span>
+0007 <span class="comment">% INPUT</span>
+0008 <span class="comment">%   verbosity   An integer specifying the level of output to the console.</span>
+0009 <span class="comment">%               This only effects output to screen and has no effect on</span>
+0010 <span class="comment">%               the logging to file.</span>
+0011 <span class="comment">%               0 = No output</span>
+0012 <span class="comment">%               1 = Minimal output (The default)</span>
+0013 <span class="comment">%               2 = Outputs every time a string is read</span>
+0014 <span class="comment">%               3 = Also reports the size of data in the buffer</span>
+0015 <span class="comment">%</span>
+0016 <span class="comment">% OUTPUT</span>
+0017 <span class="comment">%   This function reports information to the console and to a file named:</span>
+0018 <span class="comment">%       met_log_yyyy_mmm.txt</span>
+0019 <span class="comment">%   Where yyyy and mmm are the year and abbreviated month name, repectivly.</span>
+0020 <span class="comment">%   Other heavy lifting is done by mrg_met_output and further details can</span>
+0021 <span class="comment">%   be found there.</span>
+0022 <span class="comment">%</span>
+0023 <span class="comment">% REQUIREMENTS</span>
+0024 <span class="comment">%   Requires mrg_met_test_string and mrg_met_output</span>
+0025 <span class="comment">%</span>
+0026 <span class="comment">% AUTHORS</span>
+0027 <span class="comment">%   Bjoern Elsaesser</span>
+0028 <span class="comment">%   Daniel Pritchard</span>
+0029 <span class="comment">%</span>
+0030 <span class="comment">% LICENCE</span>
+0031 <span class="comment">%   Code distributed as part of the MRG toolbox from the Marine Research</span>
+0032 <span class="comment">%   Group at Queens Univeristy Belfast (QUB) School of Planning</span>
+0033 <span class="comment">%   Architecture and Civil Engineering (SPACE). Distributed under a</span>
+0034 <span class="comment">%   creative commons CC BY-SA licence, retaining full copyright of the</span>
+0035 <span class="comment">%   original authors.</span>
+0036 <span class="comment">%</span>
+0037 <span class="comment">%   http://creativecommons.org/licenses/by-sa/3.0/</span>
+0038 <span class="comment">%   http://www.qub.ac.uk/space/</span>
+0039 <span class="comment">%   http://www.qub.ac.uk/research-centres/eerc/</span>
+0040 <span class="comment">%</span>
+0041 <span class="comment">% DEVELOPMENT</span>
+0042 <span class="comment">%   v 1.0   2010</span>
+0043 <span class="comment">%           First version. BE.</span>
+0044 <span class="comment">%   v 2.1   24/01/2012 - DP</span>
+0045 <span class="comment">%           Removed useless RS232 reset capabilities.</span>
+0046 <span class="comment">%   v 3.0   August 2013. DP</span>
+0047 <span class="comment">%           Major re-write.</span>
+0048 <span class="comment">%           Clean up and document. Move into MRG toolbox.</span>
+0049 <span class="comment">%</span>
+0050 <span class="comment">%% Open serial connection</span>
+0051 s = serial(<span class="string">'/dev/ttyS0'</span>);
+0052 set(s,<span class="string">'BaudRate'</span>,9600);
+0053 fopen(s);
+0054 
+0055 disp(<span class="string">'Serial port connected. Starting mrg_met_control...'</span>)
+0056 
+0057 <span class="comment">%% Set default verbosity (1)</span>
+0058 <span class="keyword">if</span> nargin &lt; 1
+0059     verbosity = 1;
+0060 <span class="keyword">end</span>
+0061 <span class="comment">% Setting verbosity to 0 silences all output to the screen (but log files</span>
+0062 <span class="comment">% are still generated)</span>
+0063 
+0064 <span class="comment">%% The loop of doom...</span>
+0065 <span class="keyword">while</span> 1
+0066     ser_out = fgetl(s);
+0067     out = <a href="mrg_met_test_string.html" class="code" title="function out = mrg_met_test_string(inp)">mrg_met_test_string</a>(ser_out);
+0068 
+0069     <span class="keyword">if</span> out ~= 0;
+0070         <span class="comment">% The length of the data suggest we have something to process</span>
+0071         <span class="keyword">try</span>
+0072             msg = <a href="mrg_met_output.html" class="code" title="function str = mrg_met_output(out)">mrg_met_output</a>(out); 
+0073         <span class="keyword">catch</span> err
+0074             msg = [datestr(now,<span class="string">'HH:MM:SS dd/mm/yyyy'</span>), <span class="string">': FAIL. Failure to convert, save, or upload data. The error was:\n'</span>, err];
+0075         <span class="keyword">end</span>
+0076         <span class="comment">% Regardless of the outcome, write the msg to file</span>
+0077         fileID2 = fopen([<span class="string">'met_log_'</span>,datestr(date,<span class="string">'yyyy_mmm'</span>),<span class="string">'.txt'</span>],<span class="string">'a'</span>);
+0078         fprintf(fileID2,[msg,<span class="string">'\r\n'</span>]);
+0079         fclose(fileID2);
+0080         <span class="keyword">if</span> verbosity &gt; 0
+0081             fprintf([msg,<span class="string">'\n\nNB: If you are reading this, do not touch this computer!\n\n'</span>]);
+0082         <span class="keyword">end</span>
+0083         <span class="comment">% Create post-processed figures</span>
+0084         <a href="mrg_met_pp.html" class="code" title="function mrg_met_pp(days)">mrg_met_pp</a>
+0085         <span class="comment">% End post-processing</span>
+0086     <span class="keyword">elseif</span> length(ser_out) &lt; 23
+0087         <span class="comment">% ser_out is not long enough to be real data, so we have the option</span>
+0088         <span class="comment">% to get chatty to the user, if set in the call to</span>
+0089         <span class="comment">% mrg_met_control.m</span>
+0090         <span class="keyword">if</span> verbosity &gt; 1 
+0091             msg = [<span class="string">'Logging Weather Station @ '</span>, ser_out];
+0092             fprintf(msg);
+0093         <span class="keyword">end</span>
+0094         <span class="keyword">if</span> verbosity &gt; 2
+0095             msg = [<span class="string">'Bytes in Buffer : '</span>, num2str(s.BytesAvailable), <span class="string">'\n'</span>];
+0096             fprintf(msg);
+0097         <span class="keyword">end</span>
+0098     <span class="keyword">end</span>
+0099     
+0100     <span class="comment">% If we get to this stage and there are few than 23 bytes to read, we</span>
+0101     <span class="comment">% should wait for 10 seconds...</span>
+0102     <span class="keyword">if</span> s.BytesAvailable &lt; 23 
+0103         pause(10)
+0104     <span class="keyword">end</span>
+0105 <span class="keyword">end</span>
+0106 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 17-Sep-2013 09:56:39 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

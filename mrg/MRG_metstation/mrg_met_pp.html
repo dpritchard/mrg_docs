@@ -1,0 +1,223 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of mrg_met_pp</title>
+  <meta name="keywords" content="mrg_met_pp">
+  <meta name="description" content="Plots metstation data for display by an external web application">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">mrg</a> &gt; <a href="index.html">MRG_metstation</a> &gt; mrg_met_pp.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for mrg\MRG_metstation&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>mrg_met_pp
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>Plots metstation data for display by an external web application</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function mrg_met_pp(days) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Plots metstation data for display by an external web application
+
+ INPUT
+   days    The number of days to display (defualt is 1)
+
+ OUTPUT
+   NO OUTPUT AT CONSOLE
+   Generates figures for wind-speed, wind direction, air temperature,
+   water temperature, 
+
+ REQUIREMENTS
+   Assumes you have MRG-metation formatted CSV files in the current
+   working directory.
+
+ AUTHORS
+   Daniel Pritchard
+
+ LICENCE
+   Code distributed as part of the MRG toolbox from the Marine Research
+   Group at Queens Univeristy Belfast (QUB) School of Planning
+   Architecture and Civil Engineering (SPACE). Distributed under a
+   creative commons CC BY-SA licence, retaining full copyright of the
+   original authors.
+
+   http://creativecommons.org/licenses/by-sa/3.0/
+   http://www.qub.ac.uk/space/
+   http://www.qub.ac.uk/research-centres/eerc/
+
+ DEVELOPMENT
+   v 1.0   2013-08-16
+           First version. DP
+
+% Function Begin!</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="mrg_met_control.html" class="code" title="function mrg_met_control(verbosity)">mrg_met_control</a>	The core Metstation control file</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function mrg_met_pp(days)</a>
+0002 <span class="comment">% Plots metstation data for display by an external web application</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% INPUT</span>
+0005 <span class="comment">%   days    The number of days to display (defualt is 1)</span>
+0006 <span class="comment">%</span>
+0007 <span class="comment">% OUTPUT</span>
+0008 <span class="comment">%   NO OUTPUT AT CONSOLE</span>
+0009 <span class="comment">%   Generates figures for wind-speed, wind direction, air temperature,</span>
+0010 <span class="comment">%   water temperature,</span>
+0011 <span class="comment">%</span>
+0012 <span class="comment">% REQUIREMENTS</span>
+0013 <span class="comment">%   Assumes you have MRG-metation formatted CSV files in the current</span>
+0014 <span class="comment">%   working directory.</span>
+0015 <span class="comment">%</span>
+0016 <span class="comment">% AUTHORS</span>
+0017 <span class="comment">%   Daniel Pritchard</span>
+0018 <span class="comment">%</span>
+0019 <span class="comment">% LICENCE</span>
+0020 <span class="comment">%   Code distributed as part of the MRG toolbox from the Marine Research</span>
+0021 <span class="comment">%   Group at Queens Univeristy Belfast (QUB) School of Planning</span>
+0022 <span class="comment">%   Architecture and Civil Engineering (SPACE). Distributed under a</span>
+0023 <span class="comment">%   creative commons CC BY-SA licence, retaining full copyright of the</span>
+0024 <span class="comment">%   original authors.</span>
+0025 <span class="comment">%</span>
+0026 <span class="comment">%   http://creativecommons.org/licenses/by-sa/3.0/</span>
+0027 <span class="comment">%   http://www.qub.ac.uk/space/</span>
+0028 <span class="comment">%   http://www.qub.ac.uk/research-centres/eerc/</span>
+0029 <span class="comment">%</span>
+0030 <span class="comment">% DEVELOPMENT</span>
+0031 <span class="comment">%   v 1.0   2013-08-16</span>
+0032 <span class="comment">%           First version. DP</span>
+0033 <span class="comment">%</span>
+0034 <span class="comment">%% Function Begin!</span>
+0035 <span class="keyword">if</span> nargin &lt; 1
+0036     days = 1;
+0037 <span class="keyword">end</span>
+0038 
+0039 fnameCSV = [<span class="string">'met_data_'</span>,datestr(date,<span class="string">'yyyy_mmm'</span>),<span class="string">'.csv'</span>];
+0040 f = fopen(fnameCSV);
+0041 dat = textscan(f, <span class="string">'%s %f %f %f %f %f %f %f'</span>, <span class="string">'HeaderLines'</span>,1, <span class="string">'delimiter'</span>, <span class="string">','</span>);
+0042 <span class="comment">%Old data:</span>
+0043 <span class="comment">%dat = textscan(f, '%s %f %f %f %f %f', 'delimiter', ',');</span>
+0044 fclose(f);
+0045 
+0046 dnum = datenum(char(dat{1}), <span class="string">'dd/mm/yyyy HH:MM:SS'</span>);
+0047 ctime = now;
+0048 mintime = ctime-days;
+0049 ind = dnum &gt; mintime;
+0050 
+0051 <span class="keyword">for</span> a = 2:8
+0052     nanind = dat{a}==-1e-30;
+0053     dat{a}(nanind) = NaN;
+0054 <span class="keyword">end</span>
+0055 
+0056 imgsize = [0 0 6*5 2*5];
+0057 
+0058 <span class="comment">% Light</span>
+0059 par = figure(1);
+0060 plot(dnum(ind), dat{2}(ind), <span class="string">'-o'</span>, <span class="string">'MarkerFaceColor'</span>, <span class="string">'b'</span>); 
+0061 xlim([mintime ctime]); 
+0062 maxpar = max(dat{2}(ind));
+0063 ylim([0 max(400,maxpar*1.1)]); 
+0064 dateaxis(<span class="string">'x'</span>, 15);
+0065 xlabel([datestr(mintime, <span class="string">'dd/mm/yyyy'</span>), <span class="string">' - '</span>, datestr(ctime, <span class="string">'dd/mm/yyyy'</span>)])
+0066 ylabel(<span class="string">'PAR (\mumol photons m^{-2} s^{-1})'</span>)
+0067 
+0068 set(par,<span class="string">'PaperUnits'</span>,<span class="string">'centimeters '</span>,<span class="string">'PaperPosition'</span>,imgsize)
+0069 print(<span class="string">'-dpng'</span>, <span class="string">'-r300'</span>, <span class="string">'web/images/light.png'</span>);
+0070 
+0071 <span class="comment">% WindSpeed</span>
+0072 ws = figure(1);
+0073 plot(dnum(ind), dat{3}(ind), <span class="string">'-o'</span>, <span class="string">'MarkerFaceColor'</span>, <span class="string">'b'</span>); 
+0074 xlim([mintime ctime]); 
+0075 maxws = max(dat{3}(ind));
+0076 ylim([0 max(1,maxws*1.1)]); 
+0077 dateaxis(<span class="string">'x'</span>, 15);
+0078 xlabel([datestr(mintime, <span class="string">'dd/mm/yyyy'</span>), <span class="string">' - '</span>, datestr(ctime, <span class="string">'dd/mm/yyyy'</span>)])
+0079 ylabel(<span class="string">'Windspeed (m^{-1} s^{-1})'</span>)
+0080 
+0081 set(ws,<span class="string">'PaperUnits'</span>,<span class="string">'centimeters '</span>,<span class="string">'PaperPosition'</span>,imgsize)
+0082 print(<span class="string">'-dpng'</span>, <span class="string">'-r300'</span>, <span class="string">'web/images/ws.png'</span>);
+0083 
+0084 <span class="comment">% WindDir</span>
+0085 wd = figure(1);
+0086 plot(dnum(ind), dat{4}(ind), <span class="string">'o'</span>, <span class="string">'MarkerFaceColor'</span>, <span class="string">'b'</span>); 
+0087 xlim([mintime ctime]); 
+0088 ylim([0 360]); 
+0089 dateaxis(<span class="string">'x'</span>, 15);
+0090 xlabel([datestr(mintime, <span class="string">'dd/mm/yyyy'</span>), <span class="string">' - '</span>, datestr(ctime, <span class="string">'dd/mm/yyyy'</span>)])
+0091 ylabel(<span class="string">'Wind Direction (\circ)'</span>)
+0092 
+0093 set(wd,<span class="string">'PaperUnits'</span>,<span class="string">'centimeters '</span>,<span class="string">'PaperPosition'</span>,imgsize)
+0094 print(<span class="string">'-dpng'</span>, <span class="string">'-r300'</span>, <span class="string">'web/images/wd.png'</span>);
+0095 
+0096 <span class="comment">% AirPressure</span>
+0097 ap = figure(1);
+0098 plot(dnum(ind), dat{5}(ind), <span class="string">'-o'</span>, <span class="string">'MarkerFaceColor'</span>, <span class="string">'b'</span>); 
+0099 xlim([mintime ctime]); 
+0100 ylim([800 1700]); 
+0101 dateaxis(<span class="string">'x'</span>, 15);
+0102 xlabel([datestr(mintime, <span class="string">'dd/mm/yyyy'</span>), <span class="string">' - '</span>, datestr(ctime, <span class="string">'dd/mm/yyyy'</span>)])
+0103 ylabel(<span class="string">'Air Pressure (units)'</span>)
+0104 
+0105 set(ap,<span class="string">'PaperUnits'</span>,<span class="string">'centimeters '</span>,<span class="string">'PaperPosition'</span>,imgsize)
+0106 print(<span class="string">'-dpng'</span>, <span class="string">'-r300'</span>, <span class="string">'web/images/ap.png'</span>);
+0107 
+0108 <span class="comment">% AirTemp</span>
+0109 at = figure(1);
+0110 plot(dnum(ind), dat{6}(ind), <span class="string">'-o'</span>, <span class="string">'MarkerFaceColor'</span>, <span class="string">'b'</span>); 
+0111 xlim([mintime ctime]); 
+0112 ylim([-10 30]); 
+0113 dateaxis(<span class="string">'x'</span>, 15);
+0114 xlabel([datestr(mintime, <span class="string">'dd/mm/yyyy'</span>), <span class="string">' - '</span>, datestr(ctime, <span class="string">'dd/mm/yyyy'</span>)])
+0115 ylabel(<span class="string">'Air Temperature (\circ)'</span>)
+0116 
+0117 set(at,<span class="string">'PaperUnits'</span>,<span class="string">'centimeters '</span>,<span class="string">'PaperPosition'</span>,imgsize)
+0118 print(<span class="string">'-dpng'</span>, <span class="string">'-r300'</span>, <span class="string">'web/images/at.png'</span>);
+0119 
+0120 <span class="comment">% Tidal Level</span>
+0121 tl = figure(1);
+0122 plot(dnum(ind), dat{7}(ind), <span class="string">'-o'</span>, <span class="string">'MarkerFaceColor'</span>, <span class="string">'b'</span>); 
+0123 xlim([mintime ctime]); 
+0124  
+0125 dateaxis(<span class="string">'x'</span>, 15);
+0126 xlabel([datestr(mintime, <span class="string">'dd/mm/yyyy'</span>), <span class="string">' - '</span>, datestr(ctime, <span class="string">'dd/mm/yyyy'</span>)])
+0127 ylabel(<span class="string">'Tidal Level (units)'</span>)
+0128 
+0129 set(tl,<span class="string">'PaperUnits'</span>,<span class="string">'centimeters '</span>,<span class="string">'PaperPosition'</span>,imgsize)
+0130 print(<span class="string">'-dpng'</span>, <span class="string">'-r300'</span>, <span class="string">'web/images/tl.png'</span>);
+0131 
+0132 <span class="comment">% Water Temp</span>
+0133 wt = figure(1);
+0134 plot(dnum(ind), dat{8}(ind), <span class="string">'-o'</span>, <span class="string">'MarkerFaceColor'</span>, <span class="string">'b'</span>); 
+0135 xlim([mintime ctime]); 
+0136 <span class="comment">%ylim([-5 20]);</span>
+0137 dateaxis(<span class="string">'x'</span>, 15);
+0138 xlabel([datestr(mintime, <span class="string">'dd/mm/yyyy'</span>), <span class="string">' - '</span>, datestr(ctime, <span class="string">'dd/mm/yyyy'</span>)])
+0139 ylabel(<span class="string">'Water Temperature (\circ)'</span>)
+0140 
+0141 set(wt,<span class="string">'PaperUnits'</span>,<span class="string">'centimeters '</span>,<span class="string">'PaperPosition'</span>,imgsize)
+0142 print(<span class="string">'-dpng'</span>, <span class="string">'-r300'</span>, <span class="string">'web/images/wt.png'</span>);
+0143 
+0144 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 17-Sep-2013 09:56:39 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

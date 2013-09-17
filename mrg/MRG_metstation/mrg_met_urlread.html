@@ -1,0 +1,255 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of mrg_met_urlread</title>
+  <meta name="keywords" content="mrg_met_urlread">
+  <meta name="description" content="A drop-in replacement for urlread in the default MATLAB insallation.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">mrg</a> &gt; <a href="index.html">MRG_metstation</a> &gt; mrg_met_urlread.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for mrg\MRG_metstation&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>mrg_met_urlread
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>A drop-in replacement for urlread in the default MATLAB insallation.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [output,status] = mrg_met_urlread(urlChar,method,params) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> A drop-in replacement for urlread in the default MATLAB insallation. 
+
+ This version adds a 90 second time out so that the calling function
+ doesn't hang when the website is unreachable. It includes a version of
+ urlreadwrite (a private function), copied verbatum but renamed as
+ mrg_met_urlreadwrite.
+
+ v 1.0 24/01/2012 DP
+       First version
+ v 1.1 August 2013 DP
+       Replaced urlreadwrite calls with mrg_met_urlreadwrite which is now
+       embedded at the end of this file</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="mrg_met_output.html" class="code" title="function str = mrg_met_output(out)">mrg_met_output</a>	Write met data to file(s) and upload to a webpage</li></ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function [urlConnection,errorid,errormsg] = mrg_met_urlreadwrite(fcn,urlChar)</a></li></ul>
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [output,status] = mrg_met_urlread(urlChar,method,params)</a>
+0002 <span class="comment">% A drop-in replacement for urlread in the default MATLAB insallation.</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% This version adds a 90 second time out so that the calling function</span>
+0005 <span class="comment">% doesn't hang when the website is unreachable. It includes a version of</span>
+0006 <span class="comment">% urlreadwrite (a private function), copied verbatum but renamed as</span>
+0007 <span class="comment">% mrg_met_urlreadwrite.</span>
+0008 <span class="comment">%</span>
+0009 <span class="comment">% v 1.0 24/01/2012 DP</span>
+0010 <span class="comment">%       First version</span>
+0011 <span class="comment">% v 1.1 August 2013 DP</span>
+0012 <span class="comment">%       Replaced urlreadwrite calls with mrg_met_urlreadwrite which is now</span>
+0013 <span class="comment">%       embedded at the end of this file</span>
+0014 
+0015 <span class="comment">%URLREAD Returns the contents of a URL as a string.</span>
+0016 <span class="comment">%   S = URLREAD('URL') reads the content at a URL into a string, S.  If the</span>
+0017 <span class="comment">%   server returns binary data, the string will contain garbage.</span>
+0018 <span class="comment">%</span>
+0019 <span class="comment">%   S = URLREAD('URL','method',PARAMS) passes information to the server as</span>
+0020 <span class="comment">%   part of the request.  The 'method' can be 'get', or 'post' and PARAMS is a</span>
+0021 <span class="comment">%   cell array of param/value pairs.</span>
+0022 <span class="comment">%</span>
+0023 <span class="comment">%   [S,STATUS] = URLREAD(...) catches any errors and returns 1 if the file</span>
+0024 <span class="comment">%   downloaded successfully and 0 otherwise.</span>
+0025 <span class="comment">%</span>
+0026 <span class="comment">%   Examples:</span>
+0027 <span class="comment">%   s = urlread('http://www.mathworks.com')</span>
+0028 <span class="comment">%   s = urlread('ftp://ftp.mathworks.com/README')</span>
+0029 <span class="comment">%   s = urlread(['file:///' fullfile(prefdir,'history.m')])</span>
+0030 <span class="comment">%</span>
+0031 <span class="comment">%   From behind a firewall, use the Preferences to set your proxy server.</span>
+0032 <span class="comment">%</span>
+0033 <span class="comment">%   See also URLWRITE.</span>
+0034 
+0035 <span class="comment">%   Matthew J. Simoneau, 13-Nov-2001</span>
+0036 <span class="comment">%   Copyright 1984-2008 The MathWorks, Inc.</span>
+0037 <span class="comment">%   $Revision: 1.3.2.11 $ $Date: 2010/08/23 23:10:47 $</span>
+0038 
+0039 <span class="comment">% This function requires Java.</span>
+0040 <span class="keyword">if</span> ~usejava(<span class="string">'jvm'</span>)
+0041    error(message(<span class="string">'MATLAB:urlread:NoJvm'</span>));
+0042 <span class="keyword">end</span>
+0043 
+0044 import com.mathworks.mlwidgets.io.InterruptibleStreamCopier;
+0045 
+0046 <span class="comment">% Be sure the proxy settings are set.</span>
+0047 com.mathworks.mlwidgets.html.HTMLPrefs.setProxySettings
+0048 
+0049 <span class="comment">% Check number of inputs and outputs.</span>
+0050 error(nargchk(1,3,nargin))
+0051 error(nargoutchk(0,2,nargout))
+0052 <span class="keyword">if</span> ~ischar(urlChar)
+0053     error(<span class="string">'MATLAB:urlread:InvalidInput'</span>,<span class="string">'The first input, the URL, must be a character array.'</span>);
+0054 <span class="keyword">end</span>
+0055 <span class="keyword">if</span> (nargin &gt; 1) &amp;&amp; ~strcmpi(method,<span class="string">'get'</span>) &amp;&amp; ~strcmpi(method,<span class="string">'post'</span>)
+0056     error(<span class="string">'MATLAB:urlread:InvalidInput'</span>,<span class="string">'Second argument must be either &quot;get&quot; or &quot;post&quot;.'</span>);
+0057 <span class="keyword">end</span>
+0058 
+0059 <span class="comment">% Do we want to throw errors or catch them?</span>
+0060 <span class="keyword">if</span> nargout == 2
+0061     catchErrors = true;
+0062 <span class="keyword">else</span>
+0063     catchErrors = false;
+0064 <span class="keyword">end</span>
+0065 
+0066 <span class="comment">% Set default outputs.</span>
+0067 output = <span class="string">''</span>;
+0068 status = 0;
+0069 
+0070 <span class="comment">%%</span>
+0071 <span class="comment">% GET method.  Tack param/value to end of URL.</span>
+0072 <span class="keyword">if</span> (nargin &gt; 1) &amp;&amp; strcmpi(method,<span class="string">'get'</span>)
+0073     <span class="keyword">if</span> mod(length(params),2) == 1
+0074         error(<span class="string">'MATLAB:urlread:InvalidInput'</span>,<span class="string">'Invalid parameter/value pair arguments.'</span>);
+0075     <span class="keyword">end</span>
+0076     <span class="keyword">for</span> i=1:2:length(params)
+0077         <span class="keyword">if</span> (i == 1), separator = <span class="string">'?'</span>; <span class="keyword">else</span> separator = <span class="string">'&amp;'</span>; <span class="keyword">end</span>
+0078         param = char(java.net.URLEncoder.encode(params{i}));
+0079         value = char(java.net.URLEncoder.encode(params{i+1}));
+0080         urlChar = [urlChar separator param <span class="string">'='</span> value];
+0081     <span class="keyword">end</span>
+0082 <span class="keyword">end</span>
+0083 
+0084 <span class="comment">% Create a urlConnection.</span>
+0085 [urlConnection,errorid,errormsg] = <a href="#_sub1" class="code" title="subfunction [urlConnection,errorid,errormsg] = mrg_met_urlreadwrite(fcn,urlChar)">mrg_met_urlreadwrite</a>(mfilename,urlChar);
+0086 <span class="keyword">if</span> isempty(urlConnection)
+0087     <span class="keyword">if</span> catchErrors, <span class="keyword">return</span>
+0088     <span class="keyword">else</span> error(errorid,errormsg);
+0089     <span class="keyword">end</span>
+0090 <span class="keyword">end</span>
+0091 
+0092 <span class="comment">%% The timeout (in milliseconds)</span>
+0093 urlConnection.setReadTimeout(90000);
+0094 
+0095 <span class="comment">% POST method.  Write param/values to server.</span>
+0096 <span class="keyword">if</span> (nargin &gt; 1) &amp;&amp; strcmpi(method,<span class="string">'post'</span>)
+0097     <span class="keyword">try</span>
+0098         urlConnection.setDoOutput(true);
+0099         urlConnection.setRequestProperty( <span class="keyword">...</span>
+0100             <span class="string">'Content-Type'</span>,<span class="string">'application/x-www-form-urlencoded'</span>);
+0101         printStream = java.io.PrintStream(urlConnection.getOutputStream);
+0102         <span class="keyword">for</span> i=1:2:length(params)
+0103             <span class="keyword">if</span> (i &gt; 1), printStream.print(<span class="string">'&amp;'</span>); <span class="keyword">end</span>
+0104             param = char(java.net.URLEncoder.encode(params{i}));
+0105             value = char(java.net.URLEncoder.encode(params{i+1}));
+0106             printStream.print([param <span class="string">'='</span> value]);
+0107         <span class="keyword">end</span>
+0108         printStream.close;
+0109     <span class="keyword">catch</span>
+0110         <span class="keyword">if</span> catchErrors, <span class="keyword">return</span>
+0111         <span class="keyword">else</span> error(<span class="string">'MATLAB:urlread:ConnectionFailed'</span>,<span class="string">'Could not POST to URL.'</span>);
+0112         <span class="keyword">end</span>
+0113     <span class="keyword">end</span>
+0114 <span class="keyword">end</span>
+0115 
+0116 <span class="comment">% Read the data from the connection.</span>
+0117 <span class="keyword">try</span>
+0118     inputStream = urlConnection.getInputStream;
+0119     byteArrayOutputStream = java.io.ByteArrayOutputStream;
+0120     <span class="comment">% This StreamCopier is unsupported and may change at any time.</span>
+0121     isc = InterruptibleStreamCopier.getInterruptibleStreamCopier;
+0122     isc.copyStream(inputStream,byteArrayOutputStream);
+0123     inputStream.close;
+0124     byteArrayOutputStream.close;
+0125     output = native2unicode(typecast(byteArrayOutputStream.toByteArray',<span class="string">'uint8'</span>),<span class="string">'UTF-8'</span>);
+0126 <span class="keyword">catch</span>
+0127     <span class="keyword">if</span> catchErrors, <span class="keyword">return</span>
+0128     <span class="keyword">else</span> error(<span class="string">'MATLAB:urlread:ConnectionFailed'</span>,<span class="string">'Error downloading URL. Your network connection may be down or your proxy settings improperly configured.'</span>);
+0129     <span class="keyword">end</span>
+0130 <span class="keyword">end</span>
+0131 
+0132 status = 1;
+0133 
+0134 <span class="comment">%% Auxlillary function</span>
+0135 <span class="comment">% Copied verbatim (but renamed) from urlreadwrite in:</span>
+0136 <span class="comment">% C:\MATLAB\R2011a\toolbox\matlab\iofun\private\urlreadwrite.m</span>
+0137 <a name="_sub1" href="#_subfunctions" class="code">function [urlConnection,errorid,errormsg] = mrg_met_urlreadwrite(fcn,urlChar)</a>
+0138 <span class="comment">%URLREADWRITE A helper function for URLREAD and URLWRITE.</span>
+0139 
+0140 <span class="comment">%   Matthew J. Simoneau, June 2005</span>
+0141 <span class="comment">%   Copyright 1984-2009 The MathWorks, Inc.</span>
+0142 <span class="comment">%   $Revision: 1.1.6.5 $ $Date: 2009/09/28 20:28:02 $</span>
+0143 
+0144 <span class="comment">% Default output arguments.</span>
+0145 urlConnection = [];
+0146 errorid = <span class="string">''</span>;
+0147 errormsg = <span class="string">''</span>;
+0148 
+0149 <span class="comment">% Determine the protocol (before the &quot;:&quot;).</span>
+0150 protocol = urlChar(1:min(find(urlChar==<span class="string">':'</span>))-1);
+0151 
+0152 <span class="comment">% Try to use the native handler, not the ice.* classes.</span>
+0153 <span class="keyword">switch</span> protocol
+0154     <span class="keyword">case</span> <span class="string">'http'</span>
+0155         <span class="keyword">try</span>
+0156             handler = sun.net.www.protocol.http.Handler;
+0157         <span class="keyword">catch</span> exception <span class="comment">%#ok</span>
+0158             handler = [];
+0159         <span class="keyword">end</span>
+0160     <span class="keyword">case</span> <span class="string">'https'</span>
+0161         <span class="keyword">try</span>
+0162             handler = sun.net.www.protocol.https.Handler;
+0163         <span class="keyword">catch</span> exception <span class="comment">%#ok</span>
+0164             handler = [];
+0165         <span class="keyword">end</span>
+0166     <span class="keyword">otherwise</span>
+0167         handler = [];
+0168 <span class="keyword">end</span>
+0169 
+0170 <span class="comment">% Create the URL object.</span>
+0171 <span class="keyword">try</span>
+0172     <span class="keyword">if</span> isempty(handler)
+0173         url = java.net.URL(urlChar);
+0174     <span class="keyword">else</span>
+0175         url = java.net.URL([],urlChar,handler);
+0176     <span class="keyword">end</span>
+0177 <span class="keyword">catch</span> exception <span class="comment">%#ok</span>
+0178     errorid = [<span class="string">'MATLAB:'</span> fcn <span class="string">':InvalidUrl'</span>];
+0179     errormsg = <span class="string">'Either this URL could not be parsed or the protocol is not supported.'</span>;
+0180     <span class="keyword">return</span>
+0181 <span class="keyword">end</span>
+0182 
+0183 <span class="comment">% Get the proxy information using MathWorks facilities for unified proxy</span>
+0184 <span class="comment">% preference settings.</span>
+0185 mwtcp = com.mathworks.net.transport.MWTransportClientPropertiesFactory.create();
+0186 proxy = mwtcp.getProxy(); 
+0187 
+0188 
+0189 <span class="comment">% Open a connection to the URL.</span>
+0190 <span class="keyword">if</span> isempty(proxy)
+0191     urlConnection = url.openConnection;
+0192 <span class="keyword">else</span>
+0193     urlConnection = url.openConnection(proxy);
+0194 <span class="keyword">end</span>
+0195</pre></div>
+<hr><address>Generated on Tue 17-Sep-2013 09:56:39 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

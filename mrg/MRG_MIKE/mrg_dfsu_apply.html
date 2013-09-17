@@ -1,0 +1,199 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of mrg_dfsu_apply</title>
+  <meta name="keywords" content="mrg_dfsu_apply">
+  <meta name="description" content="Applys an arbitary function (specified by fhandle) to a selected item in a DFSU file.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">mrg</a> &gt; <a href="index.html">MRG_MIKE</a> &gt; mrg_dfsu_apply.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for mrg\MRG_MIKE&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>mrg_dfsu_apply
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>Applys an arbitary function (specified by fhandle) to a selected item in a DFSU file.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function mrg_dfsu_apply(fhandle, varargin) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Applys an arbitary function (specified by fhandle) to a selected item in a DFSU file.  
+
+ INPUT
+   fhandle       A function handle, constucted using the '@' syntax. See
+                 'doc function_handle' for more information 
+   ...           Optional items passed verbatium to the function specified
+                 by fhandle
+
+ OUTPUT
+   NO OUTPUT TO CONSOLE
+   Modifies a DFSU file directly.
+
+ NOTES
+   This function takes a DFSU file and loops through it
+   timestep-by-timestep applying the function specified by fhandle. At
+   each timestep, fhandle is supplied a vector with N values (where N is
+   the number of elements in the domain).  The result, which must also be
+   of length N, is written back to the DFSU file. Everything in varargin
+   gets passed to fhandel, allowing the use of moderatly complex
+   functions.
+
+ USAGE
+   func = @mrg_assign;
+   % Every cell greater than -12.5 gets a value of 1
+   mrg_dfsu_apply(func, '&gt;', -12.5, 1);
+   % Every cell less than -12.5 gets a value of 0 
+   mrg_dfsu_apply(func, '&lt;', -12.5, 0);
+   % Every euqal to -12.5 gets a value of 1
+   mrg_dfsu_apply(func, '=', -12.5, 1);
+
+ REQUIREMENTS
+   The DHI/MIKE Matlab toolbox 2011/13 (developed with v. 20130222)
+
+ WARNING
+  This modifies the DFSU file directly, ensure you copy the file first,
+  before attempting to apply this function.
+
+ LICENCE
+   Created by Daniel Pritchard (www.pritchard.co)
+   Distributed under a creative commons CC BY-SA licence. See here:
+   http://creativecommons.org/licenses/by-sa/3.0/
+
+ DEVELOPMENT
+   v 1.0   July 2013
+           DP. Initial attempt.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function mrg_dfsu_apply(fhandle, varargin)</a>
+0002 <span class="comment">% Applys an arbitary function (specified by fhandle) to a selected item in a DFSU file.</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% INPUT</span>
+0005 <span class="comment">%   fhandle       A function handle, constucted using the '@' syntax. See</span>
+0006 <span class="comment">%                 'doc function_handle' for more information</span>
+0007 <span class="comment">%   ...           Optional items passed verbatium to the function specified</span>
+0008 <span class="comment">%                 by fhandle</span>
+0009 <span class="comment">%</span>
+0010 <span class="comment">% OUTPUT</span>
+0011 <span class="comment">%   NO OUTPUT TO CONSOLE</span>
+0012 <span class="comment">%   Modifies a DFSU file directly.</span>
+0013 <span class="comment">%</span>
+0014 <span class="comment">% NOTES</span>
+0015 <span class="comment">%   This function takes a DFSU file and loops through it</span>
+0016 <span class="comment">%   timestep-by-timestep applying the function specified by fhandle. At</span>
+0017 <span class="comment">%   each timestep, fhandle is supplied a vector with N values (where N is</span>
+0018 <span class="comment">%   the number of elements in the domain).  The result, which must also be</span>
+0019 <span class="comment">%   of length N, is written back to the DFSU file. Everything in varargin</span>
+0020 <span class="comment">%   gets passed to fhandel, allowing the use of moderatly complex</span>
+0021 <span class="comment">%   functions.</span>
+0022 <span class="comment">%</span>
+0023 <span class="comment">% USAGE</span>
+0024 <span class="comment">%   func = @mrg_assign;</span>
+0025 <span class="comment">%   % Every cell greater than -12.5 gets a value of 1</span>
+0026 <span class="comment">%   mrg_dfsu_apply(func, '&gt;', -12.5, 1);</span>
+0027 <span class="comment">%   % Every cell less than -12.5 gets a value of 0</span>
+0028 <span class="comment">%   mrg_dfsu_apply(func, '&lt;', -12.5, 0);</span>
+0029 <span class="comment">%   % Every euqal to -12.5 gets a value of 1</span>
+0030 <span class="comment">%   mrg_dfsu_apply(func, '=', -12.5, 1);</span>
+0031 <span class="comment">%</span>
+0032 <span class="comment">% REQUIREMENTS</span>
+0033 <span class="comment">%   The DHI/MIKE Matlab toolbox 2011/13 (developed with v. 20130222)</span>
+0034 <span class="comment">%</span>
+0035 <span class="comment">% WARNING</span>
+0036 <span class="comment">%  This modifies the DFSU file directly, ensure you copy the file first,</span>
+0037 <span class="comment">%  before attempting to apply this function.</span>
+0038 <span class="comment">%</span>
+0039 <span class="comment">% LICENCE</span>
+0040 <span class="comment">%   Created by Daniel Pritchard (www.pritchard.co)</span>
+0041 <span class="comment">%   Distributed under a creative commons CC BY-SA licence. See here:</span>
+0042 <span class="comment">%   http://creativecommons.org/licenses/by-sa/3.0/</span>
+0043 <span class="comment">%</span>
+0044 <span class="comment">% DEVELOPMENT</span>
+0045 <span class="comment">%   v 1.0   July 2013</span>
+0046 <span class="comment">%           DP. Initial attempt.</span>
+0047 
+0048 <span class="comment">%% Start!</span>
+0049 <span class="keyword">if</span> ~isa(fhandle, <span class="string">'function_handle'</span>)
+0050     error(<span class="string">'fhandle must be a valid function handle!'</span>);
+0051 <span class="keyword">end</span>
+0052 
+0053 [filename, path] = uigetfile(<span class="string">'.dfsu'</span>,<span class="string">'Select a DFSU file to process'</span>);
+0054 cd(path);
+0055 
+0056 choice = questdlg(sprintf(<span class="string">'This function WILL modify your DFSU file.\n\nDo you want to continue'</span>), <span class="keyword">...</span>
+0057     <span class="string">'Warning!'</span>, <span class="string">'OK'</span>, <span class="string">'Cancel'</span>, <span class="string">'Cancel'</span>);
+0058 <span class="keyword">if</span> strcmp(choice, <span class="string">'Cancel'</span>)
+0059     error(<span class="string">'Canceled by user'</span>)
+0060 <span class="keyword">end</span>
+0061 
+0062 <span class="comment">% Load libraries</span>
+0063 NET.addAssembly(<span class="string">'DHI.Generic.MikeZero.DFS'</span>);
+0064 NET.addAssembly(<span class="string">'DHI.Generic.MikeZero.EUM'</span>);
+0065 import DHI.Generic.MikeZero.DFS.*;
+0066 import DHI.Generic.MikeZero.DFS.dfsu.*;
+0067 import DHI.Generic.MikeZero.*
+0068 
+0069 <span class="comment">% Get file</span>
+0070 dfsu_file = DfsFileFactory.DfsuFileOpenEdit(filename);
+0071 
+0072 <span class="comment">% Read some item information</span>
+0073 items = {};
+0074 <span class="keyword">for</span> i = 0:dfsu_file.ItemInfo.Count-1
+0075     item = dfsu_file.ItemInfo.Item(i);
+0076     items{i+1,1} = char(item.Name);
+0077     items{i+1,2} = char(item.Quantity.Unit);
+0078     items{i+1,3} = char(item.Quantity.UnitAbbreviation);
+0079 <span class="keyword">end</span>
+0080 
+0081 <span class="comment">% Ask the user to select the item to process</span>
+0082 choice = menu(sprintf(<span class="string">'Which of these objects do you want to process?'</span>),items{:,1}, <span class="string">'Ummm... None of the above!'</span>);
+0083 <span class="keyword">if</span> choice == 0 || choice == length(items(:,1))+1
+0084     error(<span class="string">'Do or do not.  There is no try.'</span>);
+0085 <span class="keyword">else</span>
+0086     dfsu_item = choice; <span class="comment">% A number delimiting the item position in the DFSU file.  The same as mat_item (i.e. no zero indexing).</span>
+0087 <span class="keyword">end</span>
+0088 
+0089 <span class="comment">%%</span>
+0090 no_timesteps = dfsu_file.NumberOfTimeSteps;
+0091 h = waitbar(0,<span class="string">'Please wait...'</span>);
+0092 <span class="keyword">for</span> i=0:no_timesteps-1
+0093     <span class="comment">% Read a timestep from the file</span>
+0094     itemData = dfsu_file.ReadItemTimeStep(dfsu_item,i);
+0095     data     = double(itemData.Data)';
+0096     <span class="comment">% Calculate new values</span>
+0097     data  = fhandle(data, varargin{:});
+0098     <span class="comment">% Write to memory</span>
+0099     dfsu_file.WriteItemTimeStep(dfsu_item,i,itemData.Time,NET.convertArray(single(data(:))));
+0100     waitbar(i+1/no_timesteps);
+0101 <span class="keyword">end</span>
+0102 close(h)
+0103 dfsu_file.Close();
+0104 
+0105 fprintf(1, <span class="string">'\nFile modified!\n\n'</span>);
+0106 
+0107 
+0108 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 17-Sep-2013 09:56:39 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

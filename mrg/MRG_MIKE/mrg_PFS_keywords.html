@@ -1,0 +1,163 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of mrg_PFS_keywords</title>
+  <meta name="keywords" content="mrg_PFS_keywords">
+  <meta name="description" content="Reads all the ecolab, m21fm and plc files in a directory and returns the [header] keywords">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">mrg</a> &gt; <a href="index.html">MRG_MIKE</a> &gt; mrg_PFS_keywords.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for mrg\MRG_MIKE&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>mrg_PFS_keywords
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>Reads all the ecolab, m21fm and plc files in a directory and returns the [header] keywords</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function keywords = mrg_PFS_keywords </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Reads all the ecolab, m21fm and plc files in a directory and returns the [header] keywords
+
+ INPUT
+   None. The user is prompted to select a directory which can be the DHI
+   installation directory or any folder with a whole heap of PFS formatted
+   files from which to extract the keywords.  
+
+ OUTPUT
+   keywords    A MATLAB structure with fields:
+                   variable_len: PFS keywords which might be variable in
+                   length (e.g. STATE_VARIABLE_X; where X is an integer)
+                   fixed_len: PFS keywords which are probably not variable
+                   in length (e.g. ECO_LAB_SETUP)
+
+ NOTES
+   This can be called directly, if needed, but it is designed to work
+   alongside mrg_create_npp_langdef.m
+
+ AUTHORS
+   Daniel Pritchard
+
+ LICENCE
+   Code distributed as part of the MRG toolbox from the Marine Research
+   Group at Queens Univeristy Belfast (QUB) School of Planning
+   Architecture and Civil Engineering (SPACE). Distributed under a
+   creative commons CC BY-SA licence, retaining full copyright of the
+   original authors.
+
+   http://creativecommons.org/licenses/by-sa/3.0/
+   http://www.qub.ac.uk/space/
+   http://www.qub.ac.uk/research-centres/eerc/
+
+ DEVELOPMENT
+   v 1.0   2013-09-16
+           First version. DP
+
+ TODO
+   Allow variable extensions at run time.
+
+% Function Begin!</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="mrg_create_npp_langdef.html" class="code" title="function mrg_create_npp_langdef()">mrg_create_npp_langdef</a>	Creates a language definition file for NotePad++</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function keywords = mrg_PFS_keywords</a>
+0002 <span class="comment">% Reads all the ecolab, m21fm and plc files in a directory and returns the [header] keywords</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% INPUT</span>
+0005 <span class="comment">%   None. The user is prompted to select a directory which can be the DHI</span>
+0006 <span class="comment">%   installation directory or any folder with a whole heap of PFS formatted</span>
+0007 <span class="comment">%   files from which to extract the keywords.</span>
+0008 <span class="comment">%</span>
+0009 <span class="comment">% OUTPUT</span>
+0010 <span class="comment">%   keywords    A MATLAB structure with fields:</span>
+0011 <span class="comment">%                   variable_len: PFS keywords which might be variable in</span>
+0012 <span class="comment">%                   length (e.g. STATE_VARIABLE_X; where X is an integer)</span>
+0013 <span class="comment">%                   fixed_len: PFS keywords which are probably not variable</span>
+0014 <span class="comment">%                   in length (e.g. ECO_LAB_SETUP)</span>
+0015 <span class="comment">%</span>
+0016 <span class="comment">% NOTES</span>
+0017 <span class="comment">%   This can be called directly, if needed, but it is designed to work</span>
+0018 <span class="comment">%   alongside mrg_create_npp_langdef.m</span>
+0019 <span class="comment">%</span>
+0020 <span class="comment">% AUTHORS</span>
+0021 <span class="comment">%   Daniel Pritchard</span>
+0022 <span class="comment">%</span>
+0023 <span class="comment">% LICENCE</span>
+0024 <span class="comment">%   Code distributed as part of the MRG toolbox from the Marine Research</span>
+0025 <span class="comment">%   Group at Queens Univeristy Belfast (QUB) School of Planning</span>
+0026 <span class="comment">%   Architecture and Civil Engineering (SPACE). Distributed under a</span>
+0027 <span class="comment">%   creative commons CC BY-SA licence, retaining full copyright of the</span>
+0028 <span class="comment">%   original authors.</span>
+0029 <span class="comment">%</span>
+0030 <span class="comment">%   http://creativecommons.org/licenses/by-sa/3.0/</span>
+0031 <span class="comment">%   http://www.qub.ac.uk/space/</span>
+0032 <span class="comment">%   http://www.qub.ac.uk/research-centres/eerc/</span>
+0033 <span class="comment">%</span>
+0034 <span class="comment">% DEVELOPMENT</span>
+0035 <span class="comment">%   v 1.0   2013-09-16</span>
+0036 <span class="comment">%           First version. DP</span>
+0037 <span class="comment">%</span>
+0038 <span class="comment">% TODO</span>
+0039 <span class="comment">%   Allow variable extensions at run time.</span>
+0040 <span class="comment">%</span>
+0041 <span class="comment">%% Function Begin!</span>
+0042 folder_name = uigetdir(<span class="string">'C:/'</span>, <span class="string">'Please select the DHI installation directory'</span>);
+0043 fileList = mrg_oswalk(folder_name);
+0044 
+0045 x1 = regexp(fileList, <span class="string">'.*\.ecolab$'</span>, <span class="string">'match'</span>);
+0046 y1 = x1(~cellfun(<span class="string">'isempty'</span>,x1));
+0047 
+0048 x2 = regexp(fileList, <span class="string">'.*\.m21fm$'</span>, <span class="string">'match'</span>);
+0049 y2 = x2(~cellfun(<span class="string">'isempty'</span>,x2));
+0050 
+0051 x3 = regexp(fileList, <span class="string">'.*\.plc$'</span>, <span class="string">'match'</span>);
+0052 y3 = x3(~cellfun(<span class="string">'isempty'</span>,x3));
+0053 
+0054 a1 = [y1;y2;y3];
+0055 
+0056 allout = {};
+0057 <span class="keyword">for</span> a = 1:length(a1)
+0058     text = fileread(char(a1{a}));
+0059     matches = regexp(text, <span class="string">'\[(\w+)\]\s+'</span>, <span class="string">'tokens'</span>);
+0060     allout = [allout;matches.'];
+0061 <span class="keyword">end</span>
+0062 
+0063 varlen = regexp([allout{:}].', <span class="string">'(\w+_)\d+'</span>, <span class="string">'tokens'</span>);
+0064 index = ~cellfun(<span class="string">'isempty'</span>,varlen);
+0065 
+0066 varlen = varlen(index);
+0067 varlen = [varlen{:}];
+0068 
+0069 notvarlen = allout(~index);
+0070 
+0071 varlenout = unique([varlen{:}]);
+0072 notvarlenout = unique([notvarlen{:}]);
+0073 
+0074 keywords = struct();
+0075 keywords.variable_len = varlenout;
+0076 keywords.fixed_len = notvarlenout;
+0077 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 17-Sep-2013 09:56:39 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

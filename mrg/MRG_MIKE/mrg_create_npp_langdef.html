@@ -1,0 +1,188 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of mrg_create_npp_langdef</title>
+  <meta name="keywords" content="mrg_create_npp_langdef">
+  <meta name="description" content="Creates a language definition file for NotePad++">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">mrg</a> &gt; <a href="index.html">MRG_MIKE</a> &gt; mrg_create_npp_langdef.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for mrg\MRG_MIKE&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>mrg_create_npp_langdef
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>Creates a language definition file for NotePad++</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function mrg_create_npp_langdef() </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Creates a language definition file for NotePad++ 
+
+ This function scans a user-selected directory (e.g. the DHI installation
+ directory) and extracts the information from the files it finds there.
+
+ INPUT
+   None. The user is prompted to select the
+   userDefineLang_PFS_Template.xml file.  
+
+ OUTPUT
+   NO OUTPUT AT CONSOLE.
+   Three files are generated:
+       userDefineLang.xml: The language definition file
+       pfs_static_list.txt: A list of 'static' PFS keywords
+       pfs_variable_list.txt: The 'variable' PFS keywords
+
+ NOTES
+   The three files will be written to the same folder as the
+   userDefineLang_PFS_Template.xml file, and will overwirte any files with
+   the same name.  
+
+ REQUIREMENTS
+   Requires userDefineLang_PFS_Template.xml which can be found in Dans 
+   MIKE PFS respository: https://github.com/dpritchard/mike_pfs_npp
+   
+   All that being said, you may as well just get the generated XML from 
+   the above link!
+
+ AUTHORS
+   Daniel Pritchard
+
+ LICENCE
+   Code distributed as part of the MRG toolbox from the Marine Research
+   Group at Queens Univeristy Belfast (QUB) School of Planning
+   Architecture and Civil Engineering (SPACE). Distributed under a
+   creative commons CC BY-SA licence, retaining full copyright of the
+   original authors.
+
+   http://creativecommons.org/licenses/by-sa/3.0/
+   http://www.qub.ac.uk/space/
+   http://www.qub.ac.uk/research-centres/eerc/
+
+ DEVELOPMENT
+   v 1.0   2013-03-??
+           First version. DP
+   v 1.1   2013-09-16
+           Updated across the board and refactored to use mrg_oswalk() 
+           and mrg_PFS_keywords()  
+
+% Get the Template
+ We assume the files with the lists are in same directory</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="mrg_PFS_keywords.html" class="code" title="function keywords = mrg_PFS_keywords">mrg_PFS_keywords</a>	Reads all the ecolab, m21fm and plc files in a directory and returns the [header] keywords</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function mrg_create_npp_langdef()</a>
+0002 <span class="comment">% Creates a language definition file for NotePad++</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% This function scans a user-selected directory (e.g. the DHI installation</span>
+0005 <span class="comment">% directory) and extracts the information from the files it finds there.</span>
+0006 <span class="comment">%</span>
+0007 <span class="comment">% INPUT</span>
+0008 <span class="comment">%   None. The user is prompted to select the</span>
+0009 <span class="comment">%   userDefineLang_PFS_Template.xml file.</span>
+0010 <span class="comment">%</span>
+0011 <span class="comment">% OUTPUT</span>
+0012 <span class="comment">%   NO OUTPUT AT CONSOLE.</span>
+0013 <span class="comment">%   Three files are generated:</span>
+0014 <span class="comment">%       userDefineLang.xml: The language definition file</span>
+0015 <span class="comment">%       pfs_static_list.txt: A list of 'static' PFS keywords</span>
+0016 <span class="comment">%       pfs_variable_list.txt: The 'variable' PFS keywords</span>
+0017 <span class="comment">%</span>
+0018 <span class="comment">% NOTES</span>
+0019 <span class="comment">%   The three files will be written to the same folder as the</span>
+0020 <span class="comment">%   userDefineLang_PFS_Template.xml file, and will overwirte any files with</span>
+0021 <span class="comment">%   the same name.</span>
+0022 <span class="comment">%</span>
+0023 <span class="comment">% REQUIREMENTS</span>
+0024 <span class="comment">%   Requires userDefineLang_PFS_Template.xml which can be found in Dans</span>
+0025 <span class="comment">%   MIKE PFS respository: https://github.com/dpritchard/mike_pfs_npp</span>
+0026 <span class="comment">%</span>
+0027 <span class="comment">%   All that being said, you may as well just get the generated XML from</span>
+0028 <span class="comment">%   the above link!</span>
+0029 <span class="comment">%</span>
+0030 <span class="comment">% AUTHORS</span>
+0031 <span class="comment">%   Daniel Pritchard</span>
+0032 <span class="comment">%</span>
+0033 <span class="comment">% LICENCE</span>
+0034 <span class="comment">%   Code distributed as part of the MRG toolbox from the Marine Research</span>
+0035 <span class="comment">%   Group at Queens Univeristy Belfast (QUB) School of Planning</span>
+0036 <span class="comment">%   Architecture and Civil Engineering (SPACE). Distributed under a</span>
+0037 <span class="comment">%   creative commons CC BY-SA licence, retaining full copyright of the</span>
+0038 <span class="comment">%   original authors.</span>
+0039 <span class="comment">%</span>
+0040 <span class="comment">%   http://creativecommons.org/licenses/by-sa/3.0/</span>
+0041 <span class="comment">%   http://www.qub.ac.uk/space/</span>
+0042 <span class="comment">%   http://www.qub.ac.uk/research-centres/eerc/</span>
+0043 <span class="comment">%</span>
+0044 <span class="comment">% DEVELOPMENT</span>
+0045 <span class="comment">%   v 1.0   2013-03-??</span>
+0046 <span class="comment">%           First version. DP</span>
+0047 <span class="comment">%   v 1.1   2013-09-16</span>
+0048 <span class="comment">%           Updated across the board and refactored to use mrg_oswalk()</span>
+0049 <span class="comment">%           and mrg_PFS_keywords()</span>
+0050 <span class="comment">%</span>
+0051 <span class="comment">%% Get the Template</span>
+0052 <span class="comment">% We assume the files with the lists are in same directory</span>
+0053 old_dir = cd;
+0054 [file, path] = uigetfile(<span class="string">'userDefineLang_PFS_Template.xml'</span>, <span class="string">'Get Template'</span>);
+0055 cd(path)
+0056 fileID = fopen(file);
+0057 s = textscan(fileID,<span class="string">'%s'</span>,<span class="string">'Delimiter'</span>,<span class="string">'\n'</span>);
+0058 fclose(fileID);
+0059 s = s{1};
+0060 
+0061 <span class="comment">%% Get the header keywords</span>
+0062 keywords = <a href="mrg_PFS_keywords.html" class="code" title="function keywords = mrg_PFS_keywords">mrg_PFS_keywords</a>;
+0063 keystring = [keywords.fixed_len, keywords.variable_len];
+0064 
+0065 <span class="comment">%% Combine Items</span>
+0066 keyword_string = sprintf(<span class="string">'%s '</span>,keystring{:});
+0067 
+0068 <span class="comment">%% Populate the template</span>
+0069 s = strrep(s,<span class="string">'[MRG_KEYWORDS]'</span>, keyword_string);
+0070 
+0071 <span class="comment">%% Write File</span>
+0072 [nrows,~]= size(s);
+0073 filename = <span class="string">'userDefineLang.xml'</span>;
+0074 fid = fopen(filename, <span class="string">'w'</span>);
+0075 <span class="keyword">for</span> row=1:nrows
+0076     fprintf(fid, <span class="string">'%s\r\n'</span>, s{row,:});
+0077 <span class="keyword">end</span>
+0078 fclose(fid);
+0079 
+0080 filename = <span class="string">'pfs_static_list.txt'</span>;
+0081 fid = fopen(filename, <span class="string">'w'</span>);
+0082 fprintf(fid, <span class="string">'%s\r\n'</span>, keywords.fixed_len{:});
+0083 fclose(fid);
+0084 
+0085 filename = <span class="string">'pfs_variable_list.txt'</span>;
+0086 fid = fopen(filename, <span class="string">'w'</span>);
+0087 fprintf(fid, <span class="string">'%s\r\n'</span>, keywords.variable_len{:});
+0088 fclose(fid);
+0089 
+0090 cd(old_dir);
+0091 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 17-Sep-2013 09:56:39 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

@@ -1,0 +1,190 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of mrg_newfunc</title>
+  <meta name="keywords" content="mrg_newfunc">
+  <meta name="description" content="Prompts for a new function name and location, and creates a MATLAB '.m'">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">mrg</a> &gt; <a href="index.html">MRG_utilities</a> &gt; mrg_newfunc.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for mrg\MRG_utilities&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>mrg_newfunc
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>Prompts for a new function name and location, and creates a MATLAB '.m'</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function mrg_newfunc </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Prompts for a new function name and location, and creates a MATLAB '.m'
+ with pre-filled (biolerplate) text for documentation.
+
+ INPUT
+   None. No input required.
+
+ OUTPUT
+   No output at console. Generates a file with pre-filled (boilerplate)
+   text for function construction.  
+
+ NOTES
+   This function is intended to aid in the development of functions for
+   the MRG toolbox by providing biolerplate text for important
+   documentation.  
+
+ AUTHORS
+   Daniel Pritchard
+
+ LICENCE
+   Code distributed as part of the MRG toolbox from the Marine Research
+   Group at Queens Univeristy Belfast (QUB) School of Planning
+   Architecture and Civil Engineering (SPACE). Distributed under a
+   creative commons CC BY-SA licence, retaining full copyright of the
+   original authors.
+
+   http://creativecommons.org/licenses/by-sa/3.0/
+   http://www.qub.ac.uk/space/
+   http://www.qub.ac.uk/research-centres/eerc/
+
+ DEVELOPMENT
+   v 1.0   2013-08-15
+           First version. DP.
+           Documentation. DP.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function mrg_newfunc</a>
+0002 <span class="comment">% Prompts for a new function name and location, and creates a MATLAB '.m'</span>
+0003 <span class="comment">% with pre-filled (biolerplate) text for documentation.</span>
+0004 <span class="comment">%</span>
+0005 <span class="comment">% INPUT</span>
+0006 <span class="comment">%   None. No input required.</span>
+0007 <span class="comment">%</span>
+0008 <span class="comment">% OUTPUT</span>
+0009 <span class="comment">%   No output at console. Generates a file with pre-filled (boilerplate)</span>
+0010 <span class="comment">%   text for function construction.</span>
+0011 <span class="comment">%</span>
+0012 <span class="comment">% NOTES</span>
+0013 <span class="comment">%   This function is intended to aid in the development of functions for</span>
+0014 <span class="comment">%   the MRG toolbox by providing biolerplate text for important</span>
+0015 <span class="comment">%   documentation.</span>
+0016 <span class="comment">%</span>
+0017 <span class="comment">% AUTHORS</span>
+0018 <span class="comment">%   Daniel Pritchard</span>
+0019 <span class="comment">%</span>
+0020 <span class="comment">% LICENCE</span>
+0021 <span class="comment">%   Code distributed as part of the MRG toolbox from the Marine Research</span>
+0022 <span class="comment">%   Group at Queens Univeristy Belfast (QUB) School of Planning</span>
+0023 <span class="comment">%   Architecture and Civil Engineering (SPACE). Distributed under a</span>
+0024 <span class="comment">%   creative commons CC BY-SA licence, retaining full copyright of the</span>
+0025 <span class="comment">%   original authors.</span>
+0026 <span class="comment">%</span>
+0027 <span class="comment">%   http://creativecommons.org/licenses/by-sa/3.0/</span>
+0028 <span class="comment">%   http://www.qub.ac.uk/space/</span>
+0029 <span class="comment">%   http://www.qub.ac.uk/research-centres/eerc/</span>
+0030 <span class="comment">%</span>
+0031 <span class="comment">% DEVELOPMENT</span>
+0032 <span class="comment">%   v 1.0   2013-08-15</span>
+0033 <span class="comment">%           First version. DP.</span>
+0034 <span class="comment">%           Documentation. DP.</span>
+0035 <span class="comment">%</span>
+0036 
+0037 <span class="comment">%%</span>
+0038 [fname,fpath] = uiputfile(<span class="string">'*.m'</span>, <span class="string">'Enter a name and location for the function'</span>, <span class="string">'mrg_FUNC_NAME.m'</span>);
+0039 
+0040 bptext = [<span class="string">'function [OUT1, OUT2] = %s(IN1, IN2)\r\n'</span>,<span class="keyword">...</span>
+0041 <span class="string">'%% DESCRIPTION. What does the function do?.\r\n'</span>,<span class="keyword">...</span>
+0042 <span class="string">'%%\r\n'</span>,<span class="keyword">...</span>
+0043 <span class="string">'%% -- Read and Delete -- \r\n'</span>,<span class="keyword">...</span>
+0044 <span class="string">'%% Please fill out the description line above and the sections below. At a\r\n'</span>,<span class="keyword">...</span>
+0045 <span class="string">'%% minimum please document the INPUT and OUTPUT sections. If additional\r\n'</span>,<span class="keyword">...</span>
+0046 <span class="string">'%% sections headings are justified (e.g WARNING) please add these too.\r\n'</span>,<span class="keyword">...</span>
+0047 <span class="string">'%% -- Ends --\r\n'</span>,<span class="keyword">...</span>
+0048 <span class="string">'%%\r\n'</span>,<span class="keyword">...</span>
+0049 <span class="string">'%% INPUT\r\n'</span>,<span class="keyword">...</span>
+0050 <span class="string">'%%   IN1   DESCRIPTION\r\n'</span>,<span class="keyword">...</span>
+0051 <span class="string">'%%   IN2   DESCRIPTION\r\n'</span>,<span class="keyword">...</span>
+0052 <span class="string">'%%\r\n'</span>,<span class="keyword">...</span>
+0053 <span class="string">'%% OUTPUT\r\n'</span>,<span class="keyword">...</span>
+0054 <span class="string">'%%   OUT1  DESCRIPTION\r\n'</span>,<span class="keyword">...</span>
+0055 <span class="string">'%%   OUT2  DESCRIPTION\r\n'</span>,<span class="keyword">...</span>
+0056 <span class="string">'%%   If no output please state: NO OUTPUT AT CONSOLE\r\n'</span>,<span class="keyword">...</span>
+0057 <span class="string">'%%\r\n'</span>,<span class="keyword">...</span>
+0058 <span class="string">'%% USAGE\r\n'</span>,<span class="keyword">...</span>
+0059 <span class="string">'%%   Provide an example to show how the function should be used\r\n'</span>,<span class="keyword">...</span>
+0060 <span class="string">'%%\r\n'</span>,<span class="keyword">...</span>
+0061 <span class="string">'%% NOTES\r\n'</span>,<span class="keyword">...</span>
+0062 <span class="string">'%%   Additional (more verbose) documentation can go here.\r\n'</span>,<span class="keyword">...</span>
+0063 <span class="string">'%%\r\n'</span>,<span class="keyword">...</span>
+0064 <span class="string">'%% REQUIREMENTS\r\n'</span>,<span class="keyword">...</span>
+0065 <span class="string">'%%   List external toolboxes, platform dependancies etc here.\r\n'</span>,<span class="keyword">...</span>
+0066 <span class="string">'%%   If external toolboxes are needed, please provide links and state what\r\n'</span>,<span class="keyword">...</span>
+0067 <span class="string">'%%   version was used for development and testing.\r\n'</span>,<span class="keyword">...</span>
+0068 <span class="string">'%%\r\n'</span>,<span class="keyword">...</span>
+0069 <span class="string">'%% OCTAVE COMPATIBILITY\r\n'</span>,<span class="keyword">...</span>
+0070 <span class="string">'%%   If your code is Octave compatible? Yes, No, or Untested.\r\n'</span>,<span class="keyword">...</span>
+0071 <span class="string">'%%\r\n'</span>,<span class="keyword">...</span>
+0072 <span class="string">'%% REFERENCES\r\n'</span>,<span class="keyword">...</span>
+0073 <span class="string">'%%   Please list references here in a consistent, human readable format.\r\n'</span>,<span class="keyword">...</span>
+0074 <span class="string">'%%\r\n'</span>,<span class="keyword">...</span>
+0075 <span class="string">'%% AUTHORS\r\n'</span>,<span class="keyword">...</span>
+0076 <span class="string">'%%   YOUR NAME HERE!\r\n'</span>,<span class="keyword">...</span>
+0077 <span class="string">'%%\r\n'</span>,<span class="keyword">...</span>
+0078 <span class="string">'%% LICENCE\r\n'</span>,<span class="keyword">...</span>
+0079 <span class="string">'%%   Code distributed as part of the MRG toolbox from the Marine Research\r\n'</span>,<span class="keyword">...</span><span class="comment"> </span>
+0080 <span class="string">'%%   Group at Queens Univeristy Belfast (QUB) School of Planning\r\n'</span>,<span class="keyword">...</span><span class="comment"> </span>
+0081 <span class="string">'%%   Architecture and Civil Engineering (SPACE). Distributed under a\r\n'</span>,<span class="keyword">...</span>
+0082 <span class="string">'%%   creative commons CC BY-SA licence, retaining full copyright of the\r\n'</span>,<span class="keyword">...</span>
+0083 <span class="string">'%%   original authors.\r\n'</span>,<span class="keyword">...</span>
+0084 <span class="string">'%%\r\n'</span>,<span class="keyword">...</span>
+0085 <span class="string">'%%   http://creativecommons.org/licenses/by-sa/3.0/\r\n'</span>,<span class="keyword">...</span>
+0086 <span class="string">'%%   http://www.qub.ac.uk/space/\r\n'</span>,<span class="keyword">...</span>
+0087 <span class="string">'%%   http://www.qub.ac.uk/research-centres/eerc/\r\n'</span>,<span class="keyword">...</span>
+0088 <span class="string">'%%\r\n'</span>,<span class="keyword">...</span>
+0089 <span class="string">'%% DEVELOPMENT\r\n'</span>,<span class="keyword">...</span>
+0090 <span class="string">'%%   v 1.0   YYYY-MM-DD\r\n'</span>,<span class="keyword">...</span>
+0091 <span class="string">'%%           First version. INITIALS\r\n'</span>,<span class="keyword">...</span>
+0092 <span class="string">'%%\r\n'</span>,<span class="keyword">...</span>
+0093 <span class="string">'%% TODO\r\n'</span>,<span class="keyword">...</span>
+0094 <span class="string">'%%   LIST\r\n'</span>,<span class="keyword">...</span>
+0095 <span class="string">'%%\r\n'</span>,<span class="keyword">...</span>
+0096 <span class="string">'%%\r\n'</span>,<span class="keyword">...</span>
+0097 <span class="string">'%%%% Function Begin!\r\n'</span>,<span class="keyword">...</span>
+0098 <span class="string">'\r\n'</span>,<span class="keyword">...</span>
+0099 <span class="string">'\r\n'</span>,<span class="keyword">...</span>
+0100 <span class="string">'\r\n'</span>,<span class="keyword">...</span>
+0101 <span class="string">'end\r\n'</span>];
+0102 
+0103 fileID = fopen([fpath, fname],<span class="string">'w'</span>);
+0104 funcname = fname(1:end-2);
+0105 fprintf(fileID,bptext,funcname);
+0106 fclose(fileID);
+0107 
+0108 edit([fpath, fname])
+0109 
+0110 <span class="keyword">end</span>
+0111</pre></div>
+<hr><address>Generated on Tue 17-Sep-2013 09:56:39 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>
