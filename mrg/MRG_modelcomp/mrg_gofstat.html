@@ -52,6 +52,8 @@
                : The p-value on R
        Pbar : An n-by-1 vector. The nanmean of Pred
        Obar : An n-by-1 vector. The nanmean of Obs
+        absPbar : An n-by-1 vector. The nanmean of abs(Pred)
+        absObar : An n-by-1 vector. The nanmean of abs(Obs)
        bias : An n-by-4 matrix with
                : The nanmean of the pairwise differences
                : The nanmean of the absolute pairwise differences 
@@ -60,8 +62,10 @@
        RMS  : An n-by-3 matrix with
                : The root mean square
                : The scatter index (RMS/Obar)
+               : The scatter index using abs of signal (RMS/abs(Obar))
                : The stdev of the differences (same as bias(:,3), above?)
-       MEF  : An n-by-1 vector. The modelling efficency
+       MEF  : An n-by-1 vector. The modelling efficency as per Stow 2009
+       skill: An n-by-1 vector. The modelling skill as per Dias 2009
        RI   : An n-by-1 vector. The reliability index
 
    Note that this uses the nanmean and nanstd functions to calculate the
@@ -77,10 +81,15 @@
        Friedrichs, M. A. M., Rose, K. A., and Wallhead, P.  2009.  Skill 
        assessment for coupled biological/physical models of marine systems.  
        Journal of Marine Systems, 76: 4--15.
+   Dias, J. M., Sousa, M. C., Bertin, X., Fortunato, A. B., and Oliveira,
+       A. 2009. Numerical modeling of the impact of the Ancao Inlet
+       relocation (Ria Formosa, Portugal). Environmental modelling and
+       software, 24: 711-725.
 
  AUTHORS
    Clare Duggan
    Daniel Pritchard
+   Bjoern Elsaesser
 
  LICENCE
    Code distributed as part of the MRG toolbox from the Marine Research
@@ -103,7 +112,9 @@
    v 1.3   2013-08-15 DP.
            Fixed error in upper confidence interval.
            More documentation.
-
+   v 1.4   2013-10-01 BE.
+           Added scatter index using absolute of obsbar and model skill.
+           as per Dias et al.
 % Function Begin!</pre></div>
 
 <!-- crossreference -->
@@ -145,117 +156,142 @@ This function is called by:
 0024 <span class="comment">%               : The p-value on R</span>
 0025 <span class="comment">%       Pbar : An n-by-1 vector. The nanmean of Pred</span>
 0026 <span class="comment">%       Obar : An n-by-1 vector. The nanmean of Obs</span>
-0027 <span class="comment">%       bias : An n-by-4 matrix with</span>
-0028 <span class="comment">%               : The nanmean of the pairwise differences</span>
-0029 <span class="comment">%               : The nanmean of the absolute pairwise differences</span>
-0030 <span class="comment">%               : The standard deviation of pairwise differences</span>
-0031 <span class="comment">%               : The so-called bias-index</span>
-0032 <span class="comment">%       RMS  : An n-by-3 matrix with</span>
-0033 <span class="comment">%               : The root mean square</span>
-0034 <span class="comment">%               : The scatter index (RMS/Obar)</span>
-0035 <span class="comment">%               : The stdev of the differences (same as bias(:,3), above?)</span>
-0036 <span class="comment">%       MEF  : An n-by-1 vector. The modelling efficency</span>
-0037 <span class="comment">%       RI   : An n-by-1 vector. The reliability index</span>
-0038 <span class="comment">%</span>
-0039 <span class="comment">%   Note that this uses the nanmean and nanstd functions to calculate the</span>
-0040 <span class="comment">%   mean of the two datasets, which will implicitly ignore missing values.</span>
-0041 <span class="comment">%   Note that this function relies on linear correlations. If your data are</span>
-0042 <span class="comment">%   circular, you might consider a circular correlation coefficient.</span>
-0043 <span class="comment">%</span>
-0044 <span class="comment">% OCTAVE COMPATIBILITY</span>
-0045 <span class="comment">%   Untested.</span>
-0046 <span class="comment">%</span>
-0047 <span class="comment">% REFERENCES</span>
-0048 <span class="comment">%   Stow, C. A., Jolliff, J., McGillicuddy, D. J., Doney, S. C., Allen, J. I.,</span>
-0049 <span class="comment">%       Friedrichs, M. A. M., Rose, K. A., and Wallhead, P.  2009.  Skill</span>
-0050 <span class="comment">%       assessment for coupled biological/physical models of marine systems.</span>
-0051 <span class="comment">%       Journal of Marine Systems, 76: 4--15.</span>
-0052 <span class="comment">%</span>
-0053 <span class="comment">% AUTHORS</span>
-0054 <span class="comment">%   Clare Duggan</span>
-0055 <span class="comment">%   Daniel Pritchard</span>
-0056 <span class="comment">%</span>
-0057 <span class="comment">% LICENCE</span>
-0058 <span class="comment">%   Code distributed as part of the MRG toolbox from the Marine Research</span>
-0059 <span class="comment">%   Group at Queens Univeristy Belfast (QUB) School of Planning</span>
-0060 <span class="comment">%   Architecture and Civil Engineering (SPACE). Distributed under a</span>
-0061 <span class="comment">%   creative commons CC BY-SA licence, retaining full copyright of the</span>
-0062 <span class="comment">%   original authors.</span>
-0063 <span class="comment">%</span>
-0064 <span class="comment">%   http://creativecommons.org/licenses/by-sa/3.0/</span>
-0065 <span class="comment">%   http://www.qub.ac.uk/space/</span>
-0066 <span class="comment">%   http://www.qub.ac.uk/research-centres/eerc/</span>
-0067 <span class="comment">%</span>
-0068 <span class="comment">% DEVELOPMENT</span>
-0069 <span class="comment">%   v 1.0   2011-10-01</span>
-0070 <span class="comment">%           First version. Clare Duggan</span>
-0071 <span class="comment">%   v 1.1   2012-10-01</span>
-0072 <span class="comment">%           Modified. Clare Duggan</span>
-0073 <span class="comment">%   v 1.2   2013-07-28</span>
-0074 <span class="comment">%           Documentation. Cleanup. Daniel Pritchard</span>
-0075 <span class="comment">%   v 1.3   2013-08-15 DP.</span>
-0076 <span class="comment">%           Fixed error in upper confidence interval.</span>
-0077 <span class="comment">%           More documentation.</span>
-0078 <span class="comment">%</span>
-0079 <span class="comment">%% Function Begin!</span>
-0080 k1 = size(Pred);
-0081 k2 = size(Obs);
-0082 
-0083 <span class="keyword">if</span> k1~=k2
-0084     msgbox(<span class="string">'Data sets are not the same size!'</span>);
-0085     <span class="keyword">return</span>
-0086 <span class="keyword">end</span>
-0087 
-0088 gofstat = struct();
-0089 
-0090 <span class="comment">%% Performing Statistical Calculations</span>
-0091 <span class="keyword">for</span> n = 1:k1(2);
-0092     <span class="comment">% Correlation coefficent with the 95% upper and lower confidence limit</span>
-0093     [R,P,RLO,RUP]=corrcoef(Pred(1:<span class="keyword">end</span>,n),Obs(1:<span class="keyword">end</span>,n),<span class="string">'rows'</span>,<span class="string">'pairwise'</span>);
-0094     gofstat.corr(n,1) = R(2);
-0095     gofstat.corr(n,2) = RLO(2);
-0096     gofstat.corr(n,3) = RUP(2);
-0097     gofstat.corr(n,4) = P(2);
-0098     
-0099     <span class="comment">% mean of the different data sets</span>
-0100     gofstat.Pbar(n,1) = nanmean(Pred(1:<span class="keyword">end</span>,n));
-0101     gofstat.Obar(n,1) = nanmean(Obs(1:<span class="keyword">end</span>,n));
-0102     
-0103     <span class="comment">% difference of the data sets</span>
-0104     delta = Pred(1:<span class="keyword">end</span>,n) - Obs(1:<span class="keyword">end</span>,n);
-0105     delta2 = abs(Pred(1:<span class="keyword">end</span>,n) - Obs(1:<span class="keyword">end</span>,n));
-0106     <span class="comment">% mean of difference</span>
-0107     gofstat.bias(n,1) = nanmean(delta);
-0108     <span class="comment">% average absolute error</span>
-0109     gofstat.bias(n,2) = nanmean(delta2);
-0110     <span class="comment">% standard deviation of difference</span>
-0111     gofstat.bias(n,3) = nanstd(delta);
-0112     <span class="comment">% bias index of the data set</span>
-0113     gofstat.bias(n,4) = gofstat.bias(n,1)/gofstat.Obar(n,1);
-0114 
-0115     <span class="comment">% RMS</span>
-0116     gofstat.RMS(n,1) = sqrt(nanmean(delta.^2));
-0117     <span class="comment">% Scatter index</span>
-0118     gofstat.RMS(n,2) = gofstat.RMS(n,1)/gofstat.Obar(n,1);
-0119     <span class="comment">% Standard deviation of the differences</span>
-0120     gofstat.RMS(n,3) = sqrt(nanmean((delta - nanmean(delta)).^2));
-0121     
-0122     <span class="comment">% MEF - the modeling efficiency</span>
-0123     <span class="comment">% observations minus average of observations</span>
-0124     difme = (Obs(1:<span class="keyword">end</span>,n) - gofstat.Obar(n,1)).^2;
-0125     <span class="comment">% predictions minus average of predictions</span>
-0126     difmo = (Pred(1:<span class="keyword">end</span>,n) - Obs(1:<span class="keyword">end</span>,n)).^2;
-0127     difme2 = nansum(difme);
-0128     difmo2 = nansum(difmo);
-0129     <span class="comment">% MEF</span>
-0130     gofstat.MEF(n,1) =(difme2-difmo2)/difme2;
-0131     
-0132     <span class="comment">% RI - Reliability Index</span>
-0133     rel = (log(Obs(1:<span class="keyword">end</span>,n)./Pred(1:<span class="keyword">end</span>,n))).^2;
-0134     rel2 = nanmean(rel);
-0135     rel3 = sqrt(rel2);
-0136     gofstat.RI(n,1) = exp(rel3);
-0137 <span class="keyword">end</span></pre></div>
-<hr><address>Generated on Tue 17-Sep-2013 09:56:39 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+0027 <span class="comment">%        absPbar : An n-by-1 vector. The nanmean of abs(Pred)</span>
+0028 <span class="comment">%        absObar : An n-by-1 vector. The nanmean of abs(Obs)</span>
+0029 <span class="comment">%       bias : An n-by-4 matrix with</span>
+0030 <span class="comment">%               : The nanmean of the pairwise differences</span>
+0031 <span class="comment">%               : The nanmean of the absolute pairwise differences</span>
+0032 <span class="comment">%               : The standard deviation of pairwise differences</span>
+0033 <span class="comment">%               : The so-called bias-index</span>
+0034 <span class="comment">%       RMS  : An n-by-3 matrix with</span>
+0035 <span class="comment">%               : The root mean square</span>
+0036 <span class="comment">%               : The scatter index (RMS/Obar)</span>
+0037 <span class="comment">%               : The scatter index using abs of signal (RMS/abs(Obar))</span>
+0038 <span class="comment">%               : The stdev of the differences (same as bias(:,3), above?)</span>
+0039 <span class="comment">%       MEF  : An n-by-1 vector. The modelling efficency as per Stow 2009</span>
+0040 <span class="comment">%       skill: An n-by-1 vector. The modelling skill as per Dias 2009</span>
+0041 <span class="comment">%       RI   : An n-by-1 vector. The reliability index</span>
+0042 <span class="comment">%</span>
+0043 <span class="comment">%   Note that this uses the nanmean and nanstd functions to calculate the</span>
+0044 <span class="comment">%   mean of the two datasets, which will implicitly ignore missing values.</span>
+0045 <span class="comment">%   Note that this function relies on linear correlations. If your data are</span>
+0046 <span class="comment">%   circular, you might consider a circular correlation coefficient.</span>
+0047 <span class="comment">%</span>
+0048 <span class="comment">% OCTAVE COMPATIBILITY</span>
+0049 <span class="comment">%   Untested.</span>
+0050 <span class="comment">%</span>
+0051 <span class="comment">% REFERENCES</span>
+0052 <span class="comment">%   Stow, C. A., Jolliff, J., McGillicuddy, D. J., Doney, S. C., Allen, J. I.,</span>
+0053 <span class="comment">%       Friedrichs, M. A. M., Rose, K. A., and Wallhead, P.  2009.  Skill</span>
+0054 <span class="comment">%       assessment for coupled biological/physical models of marine systems.</span>
+0055 <span class="comment">%       Journal of Marine Systems, 76: 4--15.</span>
+0056 <span class="comment">%   Dias, J. M., Sousa, M. C., Bertin, X., Fortunato, A. B., and Oliveira,</span>
+0057 <span class="comment">%       A. 2009. Numerical modeling of the impact of the Ancao Inlet</span>
+0058 <span class="comment">%       relocation (Ria Formosa, Portugal). Environmental modelling and</span>
+0059 <span class="comment">%       software, 24: 711-725.</span>
+0060 <span class="comment">%</span>
+0061 <span class="comment">% AUTHORS</span>
+0062 <span class="comment">%   Clare Duggan</span>
+0063 <span class="comment">%   Daniel Pritchard</span>
+0064 <span class="comment">%   Bjoern Elsaesser</span>
+0065 <span class="comment">%</span>
+0066 <span class="comment">% LICENCE</span>
+0067 <span class="comment">%   Code distributed as part of the MRG toolbox from the Marine Research</span>
+0068 <span class="comment">%   Group at Queens Univeristy Belfast (QUB) School of Planning</span>
+0069 <span class="comment">%   Architecture and Civil Engineering (SPACE). Distributed under a</span>
+0070 <span class="comment">%   creative commons CC BY-SA licence, retaining full copyright of the</span>
+0071 <span class="comment">%   original authors.</span>
+0072 <span class="comment">%</span>
+0073 <span class="comment">%   http://creativecommons.org/licenses/by-sa/3.0/</span>
+0074 <span class="comment">%   http://www.qub.ac.uk/space/</span>
+0075 <span class="comment">%   http://www.qub.ac.uk/research-centres/eerc/</span>
+0076 <span class="comment">%</span>
+0077 <span class="comment">% DEVELOPMENT</span>
+0078 <span class="comment">%   v 1.0   2011-10-01</span>
+0079 <span class="comment">%           First version. Clare Duggan</span>
+0080 <span class="comment">%   v 1.1   2012-10-01</span>
+0081 <span class="comment">%           Modified. Clare Duggan</span>
+0082 <span class="comment">%   v 1.2   2013-07-28</span>
+0083 <span class="comment">%           Documentation. Cleanup. Daniel Pritchard</span>
+0084 <span class="comment">%   v 1.3   2013-08-15 DP.</span>
+0085 <span class="comment">%           Fixed error in upper confidence interval.</span>
+0086 <span class="comment">%           More documentation.</span>
+0087 <span class="comment">%   v 1.4   2013-10-01 BE.</span>
+0088 <span class="comment">%           Added scatter index using absolute of obsbar and model skill.</span>
+0089 <span class="comment">%           as per Dias et al.</span>
+0090 <span class="comment">%% Function Begin!</span>
+0091 k1 = size(Pred);
+0092 k2 = size(Obs);
+0093 
+0094 <span class="keyword">if</span> k1~=k2
+0095     msgbox(<span class="string">'Data sets are not the same size!'</span>);
+0096     <span class="keyword">return</span>
+0097 <span class="keyword">end</span>
+0098 
+0099 gofstat = struct();
+0100 
+0101 <span class="comment">%% Performing Statistical Calculations</span>
+0102 <span class="keyword">for</span> n = 1:k1(2);
+0103     <span class="comment">% Correlation coefficent with the 95% upper and lower confidence limit</span>
+0104     [R,P,RLO,RUP]=corrcoef(Pred(1:<span class="keyword">end</span>,n),Obs(1:<span class="keyword">end</span>,n),<span class="string">'rows'</span>,<span class="string">'pairwise'</span>);
+0105     gofstat.corr(n,1) = R(2);
+0106     gofstat.corr(n,2) = RLO(2);
+0107     gofstat.corr(n,3) = RUP(2);
+0108     gofstat.corr(n,4) = P(2);
+0109     
+0110     <span class="comment">% mean of the different data sets</span>
+0111     gofstat.Pbar(n,1) = nanmean(Pred(1:<span class="keyword">end</span>,n));
+0112     gofstat.Obar(n,1) = nanmean(Obs(1:<span class="keyword">end</span>,n));
+0113     gofstat.absPbar(n,1) = nanmean(abs(Pred(1:<span class="keyword">end</span>,n)));
+0114     gofstat.absObar(n,1) = nanmean(abs(Obs(1:<span class="keyword">end</span>,n)));
+0115     
+0116     <span class="comment">% difference of the data sets</span>
+0117     delta = Pred(1:<span class="keyword">end</span>,n) - Obs(1:<span class="keyword">end</span>,n);
+0118     delta2 = abs(Pred(1:<span class="keyword">end</span>,n) - Obs(1:<span class="keyword">end</span>,n));
+0119     <span class="comment">% mean of difference</span>
+0120     gofstat.bias(n,1) = nanmean(delta);
+0121     <span class="comment">% average absolute error</span>
+0122     gofstat.bias(n,2) = nanmean(delta2);
+0123     <span class="comment">% standard deviation of difference</span>
+0124     gofstat.bias(n,3) = nanstd(delta);
+0125     <span class="comment">% bias index of the data set</span>
+0126     gofstat.bias(n,4) = gofstat.bias(n,1)/gofstat.Obar(n,1);
+0127 
+0128     <span class="comment">% RMS</span>
+0129     gofstat.RMS(n,1) = sqrt(nanmean(delta.^2));
+0130     <span class="comment">% Scatter index</span>
+0131     gofstat.RMS(n,2) = gofstat.RMS(n,1)/gofstat.Obar(n,1);
+0132     <span class="comment">% Scatter index using absolute</span>
+0133     gofstat.RMS(n,3) = gofstat.RMS(n,1)/gofstat.absObar(n,1);
+0134     <span class="comment">% Standard deviation of the differences</span>
+0135     gofstat.RMS(n,4) = sqrt(nanmean((delta - nanmean(delta)).^2));
+0136     
+0137     <span class="comment">% MEF - the modeling efficiency</span>
+0138     <span class="comment">% observations minus average of observations</span>
+0139     difme = (Obs(1:<span class="keyword">end</span>,n) - gofstat.Obar(n,1)).^2;
+0140     <span class="comment">% predictions minus average of predictions</span>
+0141     difmo = (Pred(1:<span class="keyword">end</span>,n) - Obs(1:<span class="keyword">end</span>,n)).^2;
+0142     difme2 = nansum(difme);
+0143     difmo2 = nansum(difmo);
+0144     <span class="comment">% MEF</span>
+0145     gofstat.MEF(n,1) =(difme2-difmo2)/difme2;
+0146     
+0147     <span class="comment">% SKILL - the modeling skill</span>
+0148     <span class="comment">% observations minus average of observations</span>
+0149     difsko = (Obs(1:<span class="keyword">end</span>,n) - gofstat.Obar(n,1));
+0150     difskp = (Pred(1:<span class="keyword">end</span>,n) - gofstat.Obar(n,1));
+0151     <span class="comment">% sum of differences</span>
+0152     difsk2 = nansum((difskp + difsko).^2);
+0153     
+0154     <span class="comment">% MEF</span>
+0155     gofstat.skill(n,1)=1-difmo2/difsk2;
+0156     
+0157     <span class="comment">% RI - Reliability Index</span>
+0158     rel = (log(Obs(1:<span class="keyword">end</span>,n)./Pred(1:<span class="keyword">end</span>,n))).^2;
+0159     rel2 = nanmean(rel);
+0160     rel3 = sqrt(rel2);
+0161     gofstat.RI(n,1) = exp(rel3);
+0162 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 08-Oct-2013 16:48:09 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
 </body>
 </html>
