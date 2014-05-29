@@ -1,0 +1,373 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of mrg_ptxml_read</title>
+  <meta name="keywords" content="mrg_ptxml_read">
+  <meta name="description" content="Reads a MIKE-formatted PT xml file">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">mrg</a> &gt; <a href="index.html">MRG_MIKE</a> &gt; mrg_ptxml_read.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for mrg/MRG_MIKE&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>mrg_ptxml_read
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>Reads a MIKE-formatted PT xml file</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function ptstruc = mrg_ptxml_read() </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Reads a MIKE-formatted PT xml file
+
+ OUTPUT
+   ptstruc  A MATLAB strcture with items:
+
+ AUTHORS
+   Daniel Pritchard
+
+ LICENCE
+   Code distributed as part of the MRG toolbox from the Marine Research
+   Group at Queens Univeristy Belfast (QUB) School of Planning
+   Architecture and Civil Engineering (SPACE). Distributed under a
+   creative commons CC BY-SA licence, retaining full copyright of the
+   original authors.
+
+   http://creativecommons.org/licenses/by-sa/3.0/
+   http://www.qub.ac.uk/space/
+   http://www.qub.ac.uk/research-centres/eerc/
+
+ DEVELOPMENT
+   v 1.0   2013-11-06
+           First version. DP
+   v 1.1   2013-11-26
+           Multiple classes + Compressed data
+
+ TODO
+   Check the order of items in compressed particle clases
+
+% Function Begin!</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function ptstruc = mrg_ptxml_read()</a>
+0002 <span class="comment">% Reads a MIKE-formatted PT xml file</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% OUTPUT</span>
+0005 <span class="comment">%   ptstruc  A MATLAB strcture with items:</span>
+0006 <span class="comment">%</span>
+0007 <span class="comment">% AUTHORS</span>
+0008 <span class="comment">%   Daniel Pritchard</span>
+0009 <span class="comment">%</span>
+0010 <span class="comment">% LICENCE</span>
+0011 <span class="comment">%   Code distributed as part of the MRG toolbox from the Marine Research</span>
+0012 <span class="comment">%   Group at Queens Univeristy Belfast (QUB) School of Planning</span>
+0013 <span class="comment">%   Architecture and Civil Engineering (SPACE). Distributed under a</span>
+0014 <span class="comment">%   creative commons CC BY-SA licence, retaining full copyright of the</span>
+0015 <span class="comment">%   original authors.</span>
+0016 <span class="comment">%</span>
+0017 <span class="comment">%   http://creativecommons.org/licenses/by-sa/3.0/</span>
+0018 <span class="comment">%   http://www.qub.ac.uk/space/</span>
+0019 <span class="comment">%   http://www.qub.ac.uk/research-centres/eerc/</span>
+0020 <span class="comment">%</span>
+0021 <span class="comment">% DEVELOPMENT</span>
+0022 <span class="comment">%   v 1.0   2013-11-06</span>
+0023 <span class="comment">%           First version. DP</span>
+0024 <span class="comment">%   v 1.1   2013-11-26</span>
+0025 <span class="comment">%           Multiple classes + Compressed data</span>
+0026 <span class="comment">%</span>
+0027 <span class="comment">% TODO</span>
+0028 <span class="comment">%   Check the order of items in compressed particle clases</span>
+0029 <span class="comment">%</span>
+0030 <span class="comment">%% Function Begin!</span>
+0031 <span class="keyword">if</span> (nargin == 0)
+0032     [filename, path] = uigetfile(<span class="string">'.xml'</span>,<span class="string">'Select an XML file to read'</span>);
+0033     filename = [path, filename];
+0034     cd(path);
+0035 <span class="keyword">end</span>
+0036 
+0037 fid = fopen(filename,<span class="string">'rt'</span>);
+0038 <span class="keyword">if</span> fid == -1
+0039     error(id(<span class="string">'mrg:FileNotFound'</span>),[<span class="string">'Could not find file: '</span> filename]);
+0040 <span class="keyword">end</span>
+0041 
+0042 <span class="comment">%% Get Items</span>
+0043 <span class="comment">% Get Items...</span>
+0044 disp(<span class="string">'Looking for particle classes and item types...'</span>)
+0045 line = 0;
+0046 codeloc = 1;
+0047 ptstruc = struct();
+0048 <span class="keyword">while</span> ~strcmp(line, <span class="string">'&lt;/DataAttributes&gt;'</span>)
+0049     line = fgetl(fid);
+0050     <span class="comment">% Check if it is a line (and not EOF)</span>
+0051     <span class="keyword">if</span> ~ischar(line)
+0052         <span class="keyword">break</span>
+0053     <span class="keyword">end</span>
+0054     <span class="comment">% Match Class ID</span>
+0055     <span class="keyword">if</span> strncmpi(line,<span class="string">'&lt;ClassID&gt;'</span>,9)
+0056         classno = regexpi(line,<span class="string">'&lt;ClassID&gt;\s?(\d+){1}'</span>,<span class="string">'tokens'</span>);
+0057         classnonum = str2double(classno{:});
+0058         line = fgetl(fid);
+0059         <span class="comment">% Match Class Name and propogate items...</span>
+0060         <span class="keyword">if</span> strncmpi(line,<span class="string">'&lt;Name&gt;'</span>,6)
+0061             classname = regexpi(line,<span class="string">'&lt;Name&gt;([\s\w\d]+){1}'</span>,<span class="string">'tokens'</span>);
+0062             classname = char(classname{:});
+0063             classidname = [classname, <span class="string">'_ID'</span>,  num2str(classnonum)];
+0064             ptstruc.(classidname).classID = classnonum;
+0065             ptstruc.(classidname).classname = classname;
+0066             ptstruc.(classidname).codes = cell(1,50); 
+0067             <span class="comment">% Assuming that there will be less than 50 types per particle class</span>
+0068         <span class="keyword">end</span>
+0069     <span class="keyword">end</span>
+0070     
+0071     <span class="comment">% Trim leading and trailing spaces</span>
+0072     line = strtrim(line);
+0073     <span class="comment">% Match 'code'</span>
+0074     <span class="keyword">if</span> strncmpi(line,<span class="string">'&lt;code&gt;'</span>,6)
+0075         code = regexpi(line,<span class="string">'&lt;code&gt;(\w+){1}&lt;/code&gt;'</span>,<span class="string">'tokens'</span>);
+0076         code = char(code{:});
+0077         ptstruc.(classidname).codes(codeloc) = {code};
+0078         <span class="comment">%codes(codeloc) = {code};</span>
+0079         codeloc = codeloc+1;
+0080     <span class="keyword">end</span>
+0081 <span class="keyword">end</span>
+0082 
+0083 itemnames = fieldnames(ptstruc);
+0084 <span class="keyword">for</span> a = 1:length(itemnames)
+0085     cc = cellfun(@isempty,ptstruc.(itemnames{a}).codes);
+0086     ptstruc.(itemnames{a}).codes = ptstruc.(itemnames{a}).codes(~cc);
+0087     codetemp = ptstruc.(itemnames{a}).codes;
+0088     disp([<span class="string">'Id: '</span>, num2str(ptstruc.(itemnames{a}).classID), <span class="keyword">...</span>
+0089         <span class="string">'; Name: '</span>, ptstruc.(itemnames{a}).classname, <span class="keyword">...</span><span class="comment"> </span>
+0090         <span class="string">'; Items ('</span>, num2str(length(codetemp)),<span class="string">'): '</span>, <span class="keyword">...</span>
+0091         sprintf(<span class="string">'%s'</span>, codetemp{1}), sprintf(<span class="string">', %s'</span>, codetemp{2:end})])
+0092 <span class="keyword">end</span>
+0093 <span class="comment">% and rewind...</span>
+0094 frewind(fid);
+0095 
+0096 <span class="comment">%% Estimate partcles and TS's</span>
+0097 <span class="comment">%numlines = str2num(perl('countlines.pl', filename) );</span>
+0098 disp(<span class="string">'Estimating number of timesteps and particles'</span>)
+0099 
+0100 s = dir(filename);
+0101 filebits = [0.01, 0.1, 0.2, 0.5, 1]; <span class="comment">% Read the last 10%, 20%, 50% of the file</span>
+0102 bit = 1;
+0103 <span class="keyword">while</span> 1
+0104     disp([<span class="string">'Trying last '</span>, num2str(filebits(bit)*100), <span class="string">'% of file...'</span>])
+0105     fseek(fid,-floor(s.bytes*filebits(bit)),<span class="string">'eof'</span>); <span class="comment">% Seek to the last n percent of the file</span>
+0106     C = textscan(fid, <span class="string">'%s'</span>, <span class="string">'Delimiter'</span>, <span class="string">'\n'</span>);
+0107     C = C{1};
+0108     lastpt = <span class="string">'NOTFOUND'</span>;
+0109     lastts = <span class="string">'NOTFOUND'</span>;
+0110     <span class="comment">%lastpc = 'NOTFOUND'; % pc = 'particle class', not needed now</span>
+0111     iscompressed = 0;
+0112     <span class="keyword">for</span> a = 1:length(C)
+0113         <span class="keyword">if</span> strncmpi(C(a,:),<span class="string">'&lt;Particle Nr'</span>,12)
+0114             lastpt = C(a,:);
+0115         <span class="keyword">end</span>
+0116         <span class="keyword">if</span> strncmpi(C(a,:),<span class="string">'&lt;TimeStep nr'</span>,12)
+0117             lastts = C(a,:);
+0118         <span class="keyword">end</span>
+0119         <span class="comment">%if strncmpi(C(a,:),'&lt;ParticleClass id',17)</span>
+0120         <span class="comment">%    lastpc = C(a,:);</span>
+0121         <span class="comment">%end</span>
+0122         <span class="keyword">if</span> strncmpi(C(a,:),<span class="string">'&lt;![CDATA['</span>,9)
+0123             iscompressed =  1;
+0124         <span class="keyword">end</span>
+0125     <span class="keyword">end</span>
+0126     <span class="keyword">if</span>(any([strcmp(lastpt,<span class="string">'NOTFOUND'</span>), strcmp(lastts,<span class="string">'NOTFOUND'</span>)]))
+0127         bit = bit+1;
+0128     <span class="keyword">else</span>
+0129         <span class="keyword">break</span>
+0130     <span class="keyword">end</span>
+0131 <span class="keyword">end</span>
+0132 frewind(fid);
+0133 
+0134 pstr = regexpi(lastpt,<span class="string">'&lt;Particle Nr=&quot;(\d+){1}&quot;&gt;'</span>,<span class="string">'tokens'</span>);
+0135 pstr = char(pstr{1}{1});
+0136 pnum = str2double(pstr);
+0137 
+0138 tsstr = regexpi(lastts,<span class="string">'&lt;TimeStep nr=&quot;(\d+){1}&quot;&gt;'</span>,<span class="string">'tokens'</span>);
+0139 tsstr = char(tsstr{1}{1});
+0140 tsnum = str2double(tsstr);
+0141 <span class="comment">% TS are zero-indexed, correct that here</span>
+0142 tsnum = tsnum+1;
+0143 tsstr = num2str(tsnum);
+0144 
+0145 <span class="comment">% Not needed now, due to reading the header data (above)</span>
+0146 <span class="comment">%pcstr = regexpi(lastpc,'&lt;ParticleClass id=&quot;(\d+){1}&quot;&gt;','tokens');</span>
+0147 <span class="comment">%pcstr = char(pcstr{1}{1});</span>
+0148 <span class="comment">%pcnum = str2double(pcstr);</span>
+0149 
+0150 <span class="comment">%if(pcnum &gt; 1)</span>
+0151 <span class="comment">%    error('mrg:NotImplemented', 'This function does not handle more than 1 particle class per file')</span>
+0152 <span class="comment">%end</span>
+0153 
+0154 <span class="comment">%if(iscompressed)</span>
+0155 <span class="comment">%    error('mrg:NotImplemented', 'This function does not handle compressed particle files (yet)')</span>
+0156 <span class="comment">%end</span>
+0157 
+0158 disp([<span class="string">'Est. no. timesteps: '</span>, tsstr])
+0159 disp([<span class="string">'Est. no. particles per class: '</span>, pstr])
+0160 
+0161 <span class="comment">%% Pre allocate space and setup</span>
+0162 ptitemnames = fieldnames(ptstruc);
+0163 <span class="comment">% Make a simple lookup table</span>
+0164 lookuptbl = cell(length(ptitemnames),3);
+0165 <span class="comment">% Make a list of all posisble items</span>
+0166 allitems = cell(1,1);
+0167 <span class="comment">% Allocate some space for DTs</span>
+0168 ptstruc.dtstr = repmat({<span class="string">''</span>},1,tsnum);
+0169 
+0170 <span class="keyword">for</span> a = 1:length(ptitemnames)
+0171     codes = ptstruc.(ptitemnames{a}).codes;
+0172     <span class="keyword">for</span> b = 1:length(codes)
+0173         ptstruc.(ptitemnames{a}).(codes{b}) = NaN(pnum,tsnum);
+0174     <span class="keyword">end</span>
+0175     lookuptbl{a,1} = ptstruc.(ptitemnames{a}).classID;
+0176     lookuptbl{a,2} = ptstruc.(ptitemnames{a}).classname;
+0177     lookuptbl{a,3} = ptitemnames{a};
+0178     allitems = [allitems, ptstruc.(ptitemnames{a}).codes];
+0179 <span class="keyword">end</span>
+0180 allitems = unique(allitems(2:end)); <span class="comment">% Needed later...</span>
+0181 
+0182 currtsnum = 0;
+0183 currptnum = 0;
+0184 h = waitbar(0,<span class="string">'Please wait...'</span>);
+0185 
+0186 <span class="comment">%% Read compressed data</span>
+0187 <span class="keyword">if</span> iscompressed
+0188     disp(<span class="string">'Reading data (Compressed format)'</span>)
+0189     <span class="comment">% Loop through reding line by line (potentially slow, but hard to think how else to do this!)</span>
+0190     <span class="keyword">while</span> 1
+0191         line = fgetl(fid);
+0192         <span class="comment">% Check if it is a line (and not EOF)</span>
+0193         <span class="keyword">if</span> ~ischar(line)
+0194             <span class="keyword">break</span>
+0195         <span class="keyword">end</span>
+0196         <span class="comment">% Trim leading and trailing spaces</span>
+0197         line = strtrim(line);
+0198         <span class="comment">% Match the timestep</span>
+0199         <span class="keyword">if</span> strncmpi(line,<span class="string">'&lt;TimeStep nr'</span>,12)
+0200             currts = regexpi(line,<span class="string">'&lt;TimeStep nr=&quot;(\d+){1}&quot;&gt;'</span>,<span class="string">'tokens'</span>);
+0201             currtsnum = str2double(currts{:});
+0202             currtsnum = currtsnum+1;
+0203         <span class="keyword">end</span>       
+0204         <span class="comment">% Match the DT</span>
+0205         <span class="keyword">if</span> strncmpi(line,<span class="string">'&lt;DateTime&gt;'</span>,10)
+0206             currdt = regexpi(line,<span class="string">'&lt;DateTime&gt;([\d-\s:]+)&lt;/DateTime&gt;'</span>,<span class="string">'tokens'</span>);
+0207             currdtstr = char(currdt{:});
+0208             ptstruc.dtstr(1,currtsnum) = {currdtstr};
+0209             waitbar(currtsnum/tsnum, h, sprintf([<span class="string">'Timestep '</span>, num2str(currtsnum),<span class="string">' of '</span>, num2str(tsnum), <span class="string">'\n'</span>, currdtstr]))
+0210         <span class="keyword">end</span>
+0211         <span class="comment">% Match the class</span>
+0212         <span class="keyword">if</span> strncmpi(line,<span class="string">'&lt;ParticleClass id'</span>,17)
+0213             currpcid = regexpi(line,<span class="string">'&lt;ParticleClass id=&quot;(\d+){1}&quot;&gt;'</span>,<span class="string">'tokens'</span>);
+0214             currpcidnum = str2double(currpcid{:});
+0215             <span class="comment">% Lookup name</span>
+0216             indx = cell2mat(lookuptbl(:,1))==currpcidnum;
+0217             currfname = lookuptbl{indx,3};
+0218         <span class="keyword">end</span>
+0219         <span class="comment">% Match the particle number</span>
+0220         <span class="keyword">if</span> strncmpi(line,<span class="string">'&lt;Particle Nr'</span>,12)
+0221             currpt = regexpi(line,<span class="string">'&lt;Particle Nr=&quot;(\d+){1}&quot;&gt;'</span>,<span class="string">'tokens'</span>);
+0222             currptnum = str2double(currpt{:});
+0223         <span class="keyword">end</span>
+0224         <span class="comment">% Match compressed data</span>
+0225         <span class="keyword">if</span> strncmpi(line,<span class="string">'&lt;![CDATA['</span>,9)
+0226             <span class="comment">% &lt;![CDATA[1020.000000,55.00000000,0.4968643188E-01,0.000000000,0.4029122053E-02,0.6749004142,0.000000000,0.000000000]]&gt;</span>
+0227             pattern = [<span class="string">'&lt;!\[CDATA\[(-?\d+\.*\d*[eE]?[\+\-]?\d*,?){'</span>,num2str(length(codes)),<span class="string">'}\]\]&gt;'</span>];
+0228             dat = regexpi(line,pattern,<span class="string">'tokens'</span>);
+0229             dat = regexpi(dat{1}{1},<span class="string">'(-?\d+\.*\d*[eE]?[\+\-]?\d*),?'</span>,<span class="string">'tokens'</span>);           
+0230             codetemp = ptstruc.(currfname).codes;
+0231             <span class="keyword">for</span> a = 1:length(codetemp)
+0232                 ptstruc.(currfname).(codetemp{a})(currptnum,currtsnum) = str2double(dat{a}); 
+0233                 <span class="comment">% TODO: This assumes that they are written in the same order!</span>
+0234             <span class="keyword">end</span>
+0235         <span class="keyword">end</span>
+0236     <span class="keyword">end</span>
+0237 <span class="keyword">end</span>
+0238 <span class="comment">%% Read uncompressed data</span>
+0239 <span class="keyword">if</span> ~iscompressed
+0240     disp(<span class="string">'Reading data (Uncompressed format)'</span>)
+0241     <span class="comment">% Loop through reding line by line (potentially slow, but hard to think how else to do this!)</span>
+0242     <span class="keyword">while</span> 1
+0243         line = fgetl(fid);
+0244         <span class="comment">% Check if it is a line (and not EOF)</span>
+0245         <span class="keyword">if</span> ~ischar(line)
+0246             <span class="keyword">break</span>
+0247         <span class="keyword">end</span>
+0248         <span class="comment">% Trim leading and trailing spaces</span>
+0249         line = strtrim(line);
+0250         <span class="comment">% Match the timestep</span>
+0251         <span class="keyword">if</span> strncmpi(line,<span class="string">'&lt;TimeStep nr'</span>,12)
+0252             currts = regexpi(line,<span class="string">'&lt;TimeStep nr=&quot;(\d+){1}&quot;&gt;'</span>,<span class="string">'tokens'</span>);
+0253             currtsnum = str2double(currts{:});
+0254             currtsnum = currtsnum+1;
+0255         <span class="keyword">end</span>
+0256         <span class="comment">% Match the DT</span>
+0257         <span class="keyword">if</span> strncmpi(line,<span class="string">'&lt;DateTime&gt;'</span>,10)
+0258             currdt = regexpi(line,<span class="string">'&lt;DateTime&gt;([\d-\s:]+)&lt;/DateTime&gt;'</span>,<span class="string">'tokens'</span>);
+0259             currdtstr = char(currdt{:});
+0260             ptstruc.dtstr(1,currtsnum) = {currdtstr};
+0261             waitbar(currtsnum/tsnum, h, sprintf([<span class="string">'Timestep '</span>, num2str(currtsnum),<span class="string">' of '</span>, num2str(tsnum), <span class="string">'\n'</span>, currdtstr]))
+0262         <span class="keyword">end</span>
+0263         <span class="comment">% Match the class</span>
+0264         <span class="keyword">if</span> strncmpi(line,<span class="string">'&lt;ParticleClass id'</span>,17)
+0265             currpcid = regexpi(line,<span class="string">'&lt;ParticleClass id=&quot;(\d+){1}&quot;&gt;'</span>,<span class="string">'tokens'</span>);
+0266             currpcidnum = str2double(currpcid{:});
+0267             <span class="comment">% Lookup name</span>
+0268             indx = cell2mat(lookuptbl(:,1))==currpcidnum;
+0269             currfname = lookuptbl{indx,3};
+0270         <span class="keyword">end</span>
+0271         <span class="comment">% Match the particle number</span>
+0272         <span class="keyword">if</span> strncmpi(line,<span class="string">'&lt;Particle Nr'</span>,12)
+0273             currpt = regexpi(line,<span class="string">'&lt;Particle Nr=&quot;(\d+){1}&quot;&gt;'</span>,<span class="string">'tokens'</span>);
+0274             currptnum = str2double(currpt{:});
+0275         <span class="keyword">end</span>
+0276         <span class="comment">% Match items</span>
+0277         matchers = strcat(<span class="string">'&lt;'</span>,allitems,<span class="string">'&gt;'</span>);   
+0278         matched =  regexpi(line, sprintf(<span class="string">'(%s)?'</span>, matchers{:}),<span class="string">'tokens'</span>);
+0279         <span class="keyword">if</span> ~isempty(matched)
+0280             matchedno =  find(~cellfun(@isempty,matched{:}));
+0281             <span class="keyword">if</span> length(matchedno) &gt; 1
+0282                 error(<span class="string">'More than one match between item names and xml tags'</span>);
+0283             <span class="keyword">end</span>
+0284             <span class="keyword">if</span> length(matched) == 1
+0285                 pattern = [matched{1}{matchedno}, <span class="string">'(-?\d+\.*\d*[eE]?[\+\-]?\d*)&lt;/'</span>];       
+0286                 dat = regexpi(line,pattern,<span class="string">'tokens'</span>);
+0287                 ptstruc.(currfname).(allitems{matchedno})(currptnum,currtsnum) = str2double(dat{:});
+0288             <span class="keyword">end</span>
+0289         <span class="keyword">end</span>
+0290     <span class="keyword">end</span>
+0291 <span class="keyword">end</span>
+0292 
+0293 <span class="comment">%% Finished!</span>
+0294 disp(<span class="string">'Done!'</span>)
+0295 close(h);
+0296 fclose(fid);
+0297 
+0298 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Thu 29-May-2014 21:29:53 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

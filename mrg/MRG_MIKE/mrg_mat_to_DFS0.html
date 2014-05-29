@@ -15,7 +15,7 @@
 <div><a href="../../index.html">Home</a> &gt;  <a href="#">mrg</a> &gt; <a href="index.html">MRG_MIKE</a> &gt; mrg_mat_to_DFS0.m</div>
 
 <!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
-<td align="right"><a href="index.html">Index for mrg\MRG_MIKE&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+<td align="right"><a href="index.html">Index for mrg/MRG_MIKE&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
 
 <h1>mrg_mat_to_DFS0
 </h1>
@@ -54,7 +54,10 @@
    v 1.2   04/11/11 
            DP. Modifications to make it more generic.
    v 1.3   14/02/2013
-           DP. Documentation!</pre></div>
+           DP. Documentation!
+   v 1.4   Getting timesteps right!
+   v 1.5   No longer round timesteps: Problematic for sub-second
+           timesteps</pre></div>
 
 <!-- crossreference -->
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
@@ -100,112 +103,116 @@ This function is called by:
 0027 <span class="comment">%           DP. Modifications to make it more generic.</span>
 0028 <span class="comment">%   v 1.3   14/02/2013</span>
 0029 <span class="comment">%           DP. Documentation!</span>
-0030 
-0031 <span class="comment">%% Is the input a structured array</span>
-0032 <span class="keyword">if</span> ~isstruct(padded_struct)
-0033     error(<span class="string">'You must provide a MATLAB structured array'</span>)
-0034 <span class="keyword">end</span>
-0035 
-0036 <span class="comment">%% Is a datetime name supplied?  If not, get one.</span>
-0037 <span class="keyword">if</span> ~exist(<span class="string">'datetime_name'</span>, <span class="string">'var'</span>)
-0038     datetime_name = <a href="#_sub1" class="code" title="subfunction datetime_name = get_dt_name(padded_struct)">get_dt_name</a>(padded_struct);
-0039 <span class="keyword">elseif</span> ~ischar(datetime_name)
-0040     error(<span class="string">'The datetime_name must be a string'</span>);
-0041 <span class="keyword">end</span>
-0042 
-0043 <span class="comment">%% Is variables supplied?  If not error</span>
-0044 <span class="keyword">if</span> ~exist(<span class="string">'variables'</span>, <span class="string">'var'</span>) 
-0045     error(<span class="string">'You did not supply any variables.'</span>);
-0046 <span class="keyword">end</span>
-0047 
-0048 <span class="comment">%% Is it a cell array</span>
-0049 <span class="keyword">if</span> ~iscell(variables)
-0050     error(<span class="string">'The variables must be suppled as a MATLAB cell array.'</span>);
-0051 <span class="keyword">end</span>
-0052 
-0053 <span class="comment">%% Are all the variables there?</span>
-0054 <span class="keyword">if</span> any(~isfield(padded_struct, variables))
-0055     error(<span class="string">'Some of the expected variables are missing from the supplied structured array'</span>);
-0056 <span class="keyword">end</span>
-0057 
-0058 <span class="comment">%% Check all variables the same length?</span>
-0059 
-0060 <span class="comment">%% Checks on the datetime variable</span>
-0061 datetime = padded_struct.(datetime_name);
-0062 <span class="comment">% Are there 2 dimentions?</span>
-0063 dt_dims = ndims(datetime);
-0064 <span class="keyword">if</span> dt_dims ~= 2
-0065     error(<span class="string">'The datetime object does not have 2 dimensions.'</span>);
-0066 <span class="keyword">end</span>
-0067 
-0068 <span class="comment">% Put the longest dimension first</span>
-0069 <span class="keyword">if</span> size(datetime,1) &lt; size(datetime,2)
-0070     datetime = datetime.';
-0071 <span class="keyword">end</span>
-0072 
-0073 <span class="comment">%% Are the time steps equidistant?  If so then setup the MIKE timestep</span>
-0074 <span class="comment">% Check time step for equidistant spacing</span>
-0075 timestep = round((datetime(2) - datetime(1))*24*60);
-0076 t_steps = diff(datetime)*24*60;
-0077 
-0078 <span class="keyword">if</span> any(abs(t_steps - timestep)&gt;=1/60)
-0079     error(<span class="string">'Timestep is not equidistant in file!'</span>);
-0080 <span class="keyword">end</span>
+0030 <span class="comment">%   v 1.4   Getting timesteps right!</span>
+0031 <span class="comment">%   v 1.5   No longer round timesteps: Problematic for sub-second</span>
+0032 <span class="comment">%           timesteps</span>
+0033 
+0034 <span class="comment">%% Is the input a structured array</span>
+0035 <span class="keyword">if</span> ~isstruct(padded_struct)
+0036     error(<span class="string">'You must provide a MATLAB structured array'</span>)
+0037 <span class="keyword">end</span>
+0038 
+0039 <span class="comment">%% Is a datetime name supplied?  If not, get one.</span>
+0040 <span class="keyword">if</span> ~exist(<span class="string">'datetime_name'</span>, <span class="string">'var'</span>)
+0041     datetime_name = <a href="#_sub1" class="code" title="subfunction datetime_name = get_dt_name(padded_struct)">get_dt_name</a>(padded_struct);
+0042 <span class="keyword">elseif</span> ~ischar(datetime_name)
+0043     error(<span class="string">'The datetime_name must be a string'</span>);
+0044 <span class="keyword">end</span>
+0045 
+0046 <span class="comment">%% Is variables supplied?  If not error</span>
+0047 <span class="keyword">if</span> ~exist(<span class="string">'variables'</span>, <span class="string">'var'</span>) 
+0048     error(<span class="string">'You did not supply any variables.'</span>);
+0049 <span class="keyword">end</span>
+0050 
+0051 <span class="comment">%% Is it a cell array</span>
+0052 <span class="keyword">if</span> ~iscell(variables)
+0053     error(<span class="string">'The variables must be supplied as a MATLAB cell array.'</span>);
+0054 <span class="keyword">end</span>
+0055 
+0056 <span class="comment">%% Are all the variables there?</span>
+0057 <span class="keyword">if</span> any(~isfield(padded_struct, variables))
+0058     error(<span class="string">'Some of the expected variables are missing from the supplied structured array'</span>);
+0059 <span class="keyword">end</span>
+0060 
+0061 <span class="comment">%% Check all variables the same length?</span>
+0062 
+0063 <span class="comment">%% Checks on the datetime variable</span>
+0064 datetime = padded_struct.(datetime_name);
+0065 <span class="comment">% Are there 2 dimentions?</span>
+0066 dt_dims = ndims(datetime);
+0067 <span class="keyword">if</span> dt_dims ~= 2
+0068     error(<span class="string">'The datetime object does not have 2 dimensions.'</span>);
+0069 <span class="keyword">end</span>
+0070 
+0071 <span class="comment">% Put the longest dimension first</span>
+0072 <span class="keyword">if</span> size(datetime,1) &lt; size(datetime,2)
+0073     datetime = datetime.';
+0074 <span class="keyword">end</span>
+0075 
+0076 <span class="comment">%% Are the time steps equidistant?  If so then setup the MIKE timestep</span>
+0077 <span class="comment">% Check time step for equidistant spacing</span>
+0078 <span class="comment">%timestep = round((datetime(2) - datetime(1))*24*60*60);</span>
+0079 timestep = (datetime(2) - datetime(1))*24*60*60;
+0080 t_steps = diff(datetime)*24*60*60;
 0081 
-0082 <span class="comment">%% Setup variables to describe the DFS0 file</span>
-0083 <span class="comment">% Temporal dimension information</span>
-0084 start_date = datevec(min(datetime));
-0085 <span class="comment">% NB: 'timestep' assigned above</span>
-0086 
-0087 <span class="comment">%% OK - Where do we save the DFS0 file?</span>
-0088 [dfs_name,dfs_path] = uiputfile(<span class="string">'*.dfs0'</span>,<span class="string">'Choose a name for the .dfs0 file'</span>);
-0089 cd(dfs_path)
+0082 <span class="keyword">if</span> any(abs(t_steps - timestep)&gt;=1/60)
+0083     error(<span class="string">'Timestep is not equidistant in file!'</span>);
+0084 <span class="keyword">end</span>
+0085 
+0086 <span class="comment">%% Setup variables to describe the DFS0 file</span>
+0087 <span class="comment">% Temporal dimension information</span>
+0088 start_date = datevec(min(datetime));
+0089 <span class="comment">% NB: 'timestep' assigned above</span>
 0090 
-0091 <span class="comment">%% Here after this is just copied from DHI example...</span>
-0092 <span class="comment">% Load libraries</span>
-0093 assemb = NET.addAssembly(<span class="string">'DHI.Generic.MikeZero'</span>);
-0094 import DHI.Generic.MikeZero.*
-0095 import DHI.Generic.MikeZero.DFS.*;
-0096 import DHI.Generic.MikeZero.DFS.dfs123.*;
-0097 
-0098 <span class="comment">% Create an empty dfs0 file object</span>
-0099 dfs0 = dfsTSO(dfs_name,1);
-0100 
-0101 set(dfs0,<span class="string">'filetitle'</span>,<span class="string">'Data from MATLAB'</span>);
-0102 set(dfs0,<span class="string">'startdate'</span>,double([start_date(1), start_date(2), start_date(3), start_date(4), start_date(5), start_date(6)]));
-0103 set(dfs0,<span class="string">'timestep'</span>,[0 0 0 0 0 timestep]);
-0104 addTimesteps(dfs0,length(datetime));
-0105 
-0106 <span class="comment">% 1 dbar = 0.1 bar = 10 kPa</span>
-0107 <span class="comment">% 1 mbar = 0.001 bar = 0.1 kPa = 1 hPa (hectopascal)</span>
-0108 <span class="comment">% 1 dbar = 100 hPa</span>
+0091 <span class="comment">%% OK - Where do we save the DFS0 file?</span>
+0092 [dfs_name,dfs_path] = uiputfile(<span class="string">'*.dfs0'</span>,<span class="string">'Choose a name for the .dfs0 file'</span>);
+0093 cd(dfs_path)
+0094 
+0095 <span class="comment">%% Here after this is just copied from DHI example...</span>
+0096 <span class="comment">% Load libraries</span>
+0097 assemb = NET.addAssembly(<span class="string">'DHI.Generic.MikeZero'</span>);
+0098 import DHI.Generic.MikeZero.*
+0099 import DHI.Generic.MikeZero.DFS.*;
+0100 import DHI.Generic.MikeZero.DFS.dfs123.*;
+0101 
+0102 <span class="comment">% Create an empty dfs0 file object</span>
+0103 dfs0 = dfsTSO(dfs_name,1);
+0104 
+0105 set(dfs0,<span class="string">'filetitle'</span>,<span class="string">'Data from MATLAB'</span>);
+0106 set(dfs0,<span class="string">'startdate'</span>,double([start_date(1), start_date(2), start_date(3), start_date(4), start_date(5), start_date(6)]));
+0107 set(dfs0,<span class="string">'timestep'</span>,[0 0 0 0 0 timestep]);
+0108 addTimesteps(dfs0,length(datetime));
 0109 
-0110 <span class="keyword">for</span> n = 1:length(variables)
-0111     addItem(dfs0,variables{n});
-0112 <span class="keyword">end</span>
+0110 <span class="comment">% 1 dbar = 0.1 bar = 10 kPa</span>
+0111 <span class="comment">% 1 mbar = 0.001 bar = 0.1 kPa = 1 hPa (hectopascal)</span>
+0112 <span class="comment">% 1 dbar = 100 hPa</span>
 0113 
-0114 <span class="keyword">for</span> j=1:length(variables)
-0115     var = variables{j};
-0116     dfs0(j) = single(padded_struct.(var));
-0117 <span class="keyword">end</span>
-0118 
-0119 save(dfs0);
-0120 close(dfs0);
-0121 <span class="comment">% DFS0 writing complete!</span>
+0114 <span class="keyword">for</span> n = 1:length(variables)
+0115     addItem(dfs0,variables{n});
+0116 <span class="keyword">end</span>
+0117 
+0118 <span class="keyword">for</span> j=1:length(variables)
+0119     var = variables{j};
+0120     dfs0(j) = single(padded_struct.(var));
+0121 <span class="keyword">end</span>
 0122 
-0123 <span class="comment">%% Begin nested functions for mat2DFS0 function...</span>
-0124     <a name="_sub1" href="#_subfunctions" class="code">function datetime_name = get_dt_name(padded_struct)</a>
-0125         gdn_names = fieldnames(padded_struct);
-0126         gdn_options = gdn_names;
-0127         gdn_options{end+1} = <span class="string">'None of the above!'</span>;
-0128         gdn_choice = menu(sprintf(<span class="string">'Which object contains the MATLAB datetime information?'</span>),gdn_options);
-0129         <span class="keyword">if</span> strcmp(gdn_options(gdn_choice), <span class="string">'None of the above!'</span>)
-0130             error(<span class="string">'No, that is not an option'</span>);
-0131         <span class="keyword">else</span>
-0132             datetime_name = char(gdn_names(gdn_choice));
-0133         <span class="keyword">end</span>
-0134     <span class="keyword">end</span>
-0135 <span class="keyword">end</span></pre></div>
-<hr><address>Generated on Mon 28-Oct-2013 13:07:18 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+0123 save(dfs0);
+0124 close(dfs0);
+0125 <span class="comment">% DFS0 writing complete!</span>
+0126 
+0127 <span class="comment">%% Begin nested functions for mat2DFS0 function...</span>
+0128     <a name="_sub1" href="#_subfunctions" class="code">function datetime_name = get_dt_name(padded_struct)</a>
+0129         gdn_names = fieldnames(padded_struct);
+0130         gdn_options = gdn_names;
+0131         gdn_options{end+1} = <span class="string">'None of the above!'</span>;
+0132         gdn_choice = menu(sprintf(<span class="string">'Which object contains the MATLAB datetime information?'</span>),gdn_options);
+0133         <span class="keyword">if</span> strcmp(gdn_options(gdn_choice), <span class="string">'None of the above!'</span>)
+0134             error(<span class="string">'No, that is not an option'</span>);
+0135         <span class="keyword">else</span>
+0136             datetime_name = char(gdn_names(gdn_choice));
+0137         <span class="keyword">end</span>
+0138     <span class="keyword">end</span>
+0139 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Thu 29-May-2014 21:29:53 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
 </body>
 </html>

@@ -15,7 +15,7 @@
 <div><a href="../../index.html">Home</a> &gt;  <a href="#">mrg</a> &gt; <a href="index.html">MRG_modelcomp</a> &gt; mrg_gofstat.m</div>
 
 <!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
-<td align="right"><a href="index.html">Index for mrg\MRG_modelcomp&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+<td align="right"><a href="index.html">Index for mrg/MRG_modelcomp&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
 
 <h1>mrg_gofstat
 </h1>
@@ -115,6 +115,8 @@
    v 1.4   2013-10-01 BE.
            Added scatter index using absolute of obsbar and model skill.
            as per Dias et al.
+   v 1.5   2013-10-23 BE
+           corrected bug in size comparison
 % Function Begin!</pre></div>
 
 <!-- crossreference -->
@@ -219,79 +221,81 @@ This function is called by:
 0087 <span class="comment">%   v 1.4   2013-10-01 BE.</span>
 0088 <span class="comment">%           Added scatter index using absolute of obsbar and model skill.</span>
 0089 <span class="comment">%           as per Dias et al.</span>
-0090 <span class="comment">%% Function Begin!</span>
-0091 k1 = size(Pred);
-0092 k2 = size(Obs);
-0093 
-0094 <span class="keyword">if</span> k1~=k2
-0095     msgbox(<span class="string">'Data sets are not the same size!'</span>);
-0096     <span class="keyword">return</span>
-0097 <span class="keyword">end</span>
-0098 
-0099 gofstat = struct();
+0090 <span class="comment">%   v 1.5   2013-10-23 BE</span>
+0091 <span class="comment">%           corrected bug in size comparison</span>
+0092 <span class="comment">%% Function Begin!</span>
+0093 k1 = size(Pred);
+0094 k2 = size(Obs);
+0095 
+0096 <span class="keyword">if</span> any(k1~=k2)
+0097     msgbox(<span class="string">'Data sets are not the same size!'</span>);
+0098     <span class="keyword">return</span>
+0099 <span class="keyword">end</span>
 0100 
-0101 <span class="comment">%% Performing Statistical Calculations</span>
-0102 <span class="keyword">for</span> n = 1:k1(2);
-0103     <span class="comment">% Correlation coefficent with the 95% upper and lower confidence limit</span>
-0104     [R,P,RLO,RUP]=corrcoef(Pred(1:<span class="keyword">end</span>,n),Obs(1:<span class="keyword">end</span>,n),<span class="string">'rows'</span>,<span class="string">'pairwise'</span>);
-0105     gofstat.corr(n,1) = R(2);
-0106     gofstat.corr(n,2) = RLO(2);
-0107     gofstat.corr(n,3) = RUP(2);
-0108     gofstat.corr(n,4) = P(2);
-0109     
-0110     <span class="comment">% mean of the different data sets</span>
-0111     gofstat.Pbar(n,1) = nanmean(Pred(1:<span class="keyword">end</span>,n));
-0112     gofstat.Obar(n,1) = nanmean(Obs(1:<span class="keyword">end</span>,n));
-0113     gofstat.absPbar(n,1) = nanmean(abs(Pred(1:<span class="keyword">end</span>,n)));
-0114     gofstat.absObar(n,1) = nanmean(abs(Obs(1:<span class="keyword">end</span>,n)));
-0115     
-0116     <span class="comment">% difference of the data sets</span>
-0117     delta = Pred(1:<span class="keyword">end</span>,n) - Obs(1:<span class="keyword">end</span>,n);
-0118     delta2 = abs(Pred(1:<span class="keyword">end</span>,n) - Obs(1:<span class="keyword">end</span>,n));
-0119     <span class="comment">% mean of difference</span>
-0120     gofstat.bias(n,1) = nanmean(delta);
-0121     <span class="comment">% average absolute error</span>
-0122     gofstat.bias(n,2) = nanmean(delta2);
-0123     <span class="comment">% standard deviation of difference</span>
-0124     gofstat.bias(n,3) = nanstd(delta);
-0125     <span class="comment">% bias index of the data set</span>
-0126     gofstat.bias(n,4) = gofstat.bias(n,1)/gofstat.Obar(n,1);
-0127 
-0128     <span class="comment">% RMS</span>
-0129     gofstat.RMS(n,1) = sqrt(nanmean(delta.^2));
-0130     <span class="comment">% Scatter index</span>
-0131     gofstat.RMS(n,2) = gofstat.RMS(n,1)/gofstat.Obar(n,1);
-0132     <span class="comment">% Scatter index using absolute</span>
-0133     gofstat.RMS(n,3) = gofstat.RMS(n,1)/gofstat.absObar(n,1);
-0134     <span class="comment">% Standard deviation of the differences</span>
-0135     gofstat.RMS(n,4) = sqrt(nanmean((delta - nanmean(delta)).^2));
-0136     
-0137     <span class="comment">% MEF - the modeling efficiency</span>
-0138     <span class="comment">% observations minus average of observations</span>
-0139     difme = (Obs(1:<span class="keyword">end</span>,n) - gofstat.Obar(n,1)).^2;
-0140     <span class="comment">% predictions minus average of predictions</span>
-0141     difmo = (Pred(1:<span class="keyword">end</span>,n) - Obs(1:<span class="keyword">end</span>,n)).^2;
-0142     difme2 = nansum(difme);
-0143     difmo2 = nansum(difmo);
-0144     <span class="comment">% MEF</span>
-0145     gofstat.MEF(n,1) =(difme2-difmo2)/difme2;
-0146     
-0147     <span class="comment">% SKILL - the modeling skill</span>
-0148     <span class="comment">% observations minus average of observations</span>
-0149     difsko = (Obs(1:<span class="keyword">end</span>,n) - gofstat.Obar(n,1));
-0150     difskp = (Pred(1:<span class="keyword">end</span>,n) - gofstat.Obar(n,1));
-0151     <span class="comment">% sum of differences</span>
-0152     difsk2 = nansum((difskp + difsko).^2);
-0153     
-0154     <span class="comment">% MEF</span>
-0155     gofstat.skill(n,1)=1-difmo2/difsk2;
-0156     
-0157     <span class="comment">% RI - Reliability Index</span>
-0158     rel = (log(Obs(1:<span class="keyword">end</span>,n)./Pred(1:<span class="keyword">end</span>,n))).^2;
-0159     rel2 = nanmean(rel);
-0160     rel3 = sqrt(rel2);
-0161     gofstat.RI(n,1) = exp(rel3);
-0162 <span class="keyword">end</span></pre></div>
-<hr><address>Generated on Mon 28-Oct-2013 13:07:18 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+0101 gofstat = struct();
+0102 
+0103 <span class="comment">%% Performing Statistical Calculations</span>
+0104 <span class="keyword">for</span> n = 1:k1(2);
+0105     <span class="comment">% Correlation coefficent with the 95% upper and lower confidence limit</span>
+0106     [R,P,RLO,RUP]=corrcoef(Pred(1:<span class="keyword">end</span>,n),Obs(1:<span class="keyword">end</span>,n),<span class="string">'rows'</span>,<span class="string">'pairwise'</span>);
+0107     gofstat.corr(n,1) = R(2);
+0108     gofstat.corr(n,2) = RLO(2);
+0109     gofstat.corr(n,3) = RUP(2);
+0110     gofstat.corr(n,4) = P(2);
+0111     
+0112     <span class="comment">% mean of the different data sets</span>
+0113     gofstat.Pbar(n,1) = nanmean(Pred(1:<span class="keyword">end</span>,n));
+0114     gofstat.Obar(n,1) = nanmean(Obs(1:<span class="keyword">end</span>,n));
+0115     gofstat.absPbar(n,1) = nanmean(abs(Pred(1:<span class="keyword">end</span>,n)));
+0116     gofstat.absObar(n,1) = nanmean(abs(Obs(1:<span class="keyword">end</span>,n)));
+0117     
+0118     <span class="comment">% difference of the data sets</span>
+0119     delta = Pred(1:<span class="keyword">end</span>,n) - Obs(1:<span class="keyword">end</span>,n);
+0120     delta2 = abs(Pred(1:<span class="keyword">end</span>,n) - Obs(1:<span class="keyword">end</span>,n));
+0121     <span class="comment">% mean of difference</span>
+0122     gofstat.bias(n,1) = nanmean(delta);
+0123     <span class="comment">% average absolute error</span>
+0124     gofstat.bias(n,2) = nanmean(delta2);
+0125     <span class="comment">% standard deviation of difference</span>
+0126     gofstat.bias(n,3) = nanstd(delta);
+0127     <span class="comment">% bias index of the data set</span>
+0128     gofstat.bias(n,4) = gofstat.bias(n,1)/gofstat.Obar(n,1);
+0129 
+0130     <span class="comment">% RMS</span>
+0131     gofstat.RMS(n,1) = sqrt(nanmean(delta.^2));
+0132     <span class="comment">% Scatter index</span>
+0133     gofstat.RMS(n,2) = gofstat.RMS(n,1)/gofstat.Obar(n,1);
+0134     <span class="comment">% Scatter index using absolute</span>
+0135     gofstat.RMS(n,3) = gofstat.RMS(n,1)/gofstat.absObar(n,1);
+0136     <span class="comment">% Standard deviation of the differences</span>
+0137     gofstat.RMS(n,4) = sqrt(nanmean((delta - nanmean(delta)).^2));
+0138     
+0139     <span class="comment">% MEF - the modeling efficiency</span>
+0140     <span class="comment">% observations minus average of observations</span>
+0141     difme = (Obs(1:<span class="keyword">end</span>,n) - gofstat.Obar(n,1)).^2;
+0142     <span class="comment">% predictions minus average of predictions</span>
+0143     difmo = (Pred(1:<span class="keyword">end</span>,n) - Obs(1:<span class="keyword">end</span>,n)).^2;
+0144     difme2 = nansum(difme);
+0145     difmo2 = nansum(difmo);
+0146     <span class="comment">% MEF</span>
+0147     gofstat.MEF(n,1) =(difme2-difmo2)/difme2;
+0148     
+0149     <span class="comment">% SKILL - the modeling skill</span>
+0150     <span class="comment">% observations minus average of observations</span>
+0151     difsko = (Obs(1:<span class="keyword">end</span>,n) - gofstat.Obar(n,1));
+0152     difskp = (Pred(1:<span class="keyword">end</span>,n) - gofstat.Obar(n,1));
+0153     <span class="comment">% sum of differences</span>
+0154     difsk2 = nansum((difskp + difsko).^2);
+0155     
+0156     <span class="comment">% MEF</span>
+0157     gofstat.skill(n,1)=1-difmo2/difsk2;
+0158     
+0159     <span class="comment">% RI - Reliability Index</span>
+0160     rel = (log(Obs(1:<span class="keyword">end</span>,n)./Pred(1:<span class="keyword">end</span>,n))).^2;
+0161     rel2 = nanmean(rel);
+0162     rel3 = sqrt(rel2);
+0163     gofstat.RI(n,1) = exp(rel3);
+0164 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Thu 29-May-2014 21:29:53 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
 </body>
 </html>

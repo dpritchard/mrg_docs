@@ -1,0 +1,245 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of mrg_read_3chan_logger</title>
+  <meta name="keywords" content="mrg_read_3chan_logger">
+  <meta name="description" content="DESCRIPTION. What does the function do?">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">mrg</a> &gt; <a href="index.html">MRG_utilities</a> &gt; mrg_read_3chan_logger.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for mrg/MRG_utilities&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>mrg_read_3chan_logger
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>DESCRIPTION. What does the function do?</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function wave_data = mrg_read_3chan_logger(path,filename) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> DESCRIPTION. What does the function do?
+
+ INPUT
+   path       An optional path. 
+   filename   An optional filename.
+
+ OUTPUT
+   wave_data  A MATLAB structure with the following fields:
+              path: The path to the file
+              filename: The filename
+              compass: An m x 4 matrix, the status data (3) and data_index
+              time: An m x 4 matrix, with start_time, start_index,
+              end_time and end_index.
+              raw_data: An n x 3 matrix. The raw data
+              burst_data: A structure with m fields containing the bursts
+              (subsets) of the data in raw_data
+               
+ NOTES
+   This code is based on several Read_logger*.m files floating about. Some
+   of these codes also calibrate the data using known scale (nee slope)
+   and offset (intercept) for each sensor. This function does not do that,
+   it is up to the user to apply the correct calibration.
+   NB: The general output format is *not* compatible with this old code.
+   Adjust your approach accordingly.  
+
+ AUTHORS
+   Bjoern Elsaesser
+   Daniel Pritchard
+
+ LICENCE
+   Code distributed as part of the MRG toolbox from the Marine Research
+   Group at Queens University Belfast (QUB) School of Planning
+   Architecture and Civil Engineering (SPACE). Distributed under a
+   creative commons CC BY-SA licence, retaining full copyright of the
+   original authors.
+
+   http://creativecommons.org/licenses/by-sa/3.0/
+   http://www.qub.ac.uk/space/
+   http://www.qub.ac.uk/research-centres/eerc/
+
+ DEVELOPMENT
+   v 1.0   2014-02-04
+           First version. DP
+           Brings together several codes from BEs work folder namely:
+           Read_logger3c_data; Read_logger_card.m and;
+           Read_logger_cardv2.m
+           'Compass' information is now read inline, rather than being
+           read into 'data' and then later extracted...
+
+% Function Begin!
+ Is path supplied</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function wave_data = mrg_read_3chan_logger(path,filename)</a>
+0002 <span class="comment">% DESCRIPTION. What does the function do?</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% INPUT</span>
+0005 <span class="comment">%   path       An optional path.</span>
+0006 <span class="comment">%   filename   An optional filename.</span>
+0007 <span class="comment">%</span>
+0008 <span class="comment">% OUTPUT</span>
+0009 <span class="comment">%   wave_data  A MATLAB structure with the following fields:</span>
+0010 <span class="comment">%              path: The path to the file</span>
+0011 <span class="comment">%              filename: The filename</span>
+0012 <span class="comment">%              compass: An m x 4 matrix, the status data (3) and data_index</span>
+0013 <span class="comment">%              time: An m x 4 matrix, with start_time, start_index,</span>
+0014 <span class="comment">%              end_time and end_index.</span>
+0015 <span class="comment">%              raw_data: An n x 3 matrix. The raw data</span>
+0016 <span class="comment">%              burst_data: A structure with m fields containing the bursts</span>
+0017 <span class="comment">%              (subsets) of the data in raw_data</span>
+0018 <span class="comment">%</span>
+0019 <span class="comment">% NOTES</span>
+0020 <span class="comment">%   This code is based on several Read_logger*.m files floating about. Some</span>
+0021 <span class="comment">%   of these codes also calibrate the data using known scale (nee slope)</span>
+0022 <span class="comment">%   and offset (intercept) for each sensor. This function does not do that,</span>
+0023 <span class="comment">%   it is up to the user to apply the correct calibration.</span>
+0024 <span class="comment">%   NB: The general output format is *not* compatible with this old code.</span>
+0025 <span class="comment">%   Adjust your approach accordingly.</span>
+0026 <span class="comment">%</span>
+0027 <span class="comment">% AUTHORS</span>
+0028 <span class="comment">%   Bjoern Elsaesser</span>
+0029 <span class="comment">%   Daniel Pritchard</span>
+0030 <span class="comment">%</span>
+0031 <span class="comment">% LICENCE</span>
+0032 <span class="comment">%   Code distributed as part of the MRG toolbox from the Marine Research</span>
+0033 <span class="comment">%   Group at Queens University Belfast (QUB) School of Planning</span>
+0034 <span class="comment">%   Architecture and Civil Engineering (SPACE). Distributed under a</span>
+0035 <span class="comment">%   creative commons CC BY-SA licence, retaining full copyright of the</span>
+0036 <span class="comment">%   original authors.</span>
+0037 <span class="comment">%</span>
+0038 <span class="comment">%   http://creativecommons.org/licenses/by-sa/3.0/</span>
+0039 <span class="comment">%   http://www.qub.ac.uk/space/</span>
+0040 <span class="comment">%   http://www.qub.ac.uk/research-centres/eerc/</span>
+0041 <span class="comment">%</span>
+0042 <span class="comment">% DEVELOPMENT</span>
+0043 <span class="comment">%   v 1.0   2014-02-04</span>
+0044 <span class="comment">%           First version. DP</span>
+0045 <span class="comment">%           Brings together several codes from BEs work folder namely:</span>
+0046 <span class="comment">%           Read_logger3c_data; Read_logger_card.m and;</span>
+0047 <span class="comment">%           Read_logger_cardv2.m</span>
+0048 <span class="comment">%           'Compass' information is now read inline, rather than being</span>
+0049 <span class="comment">%           read into 'data' and then later extracted...</span>
+0050 <span class="comment">%</span>
+0051 <span class="comment">%% Function Begin!</span>
+0052 <span class="comment">% Is path supplied</span>
+0053 old_path = cd();
+0054 <span class="keyword">if</span> ~exist(<span class="string">'filename'</span>, <span class="string">'var'</span>)
+0055     [filename,path] = uigetfile(<span class="string">'*.dat'</span>,<span class="string">'Select a *.dat file from the 3-channel logger'</span>);
+0056     cd(path);
+0057     <span class="keyword">if</span> isempty(filename)
+0058         <span class="keyword">return</span>
+0059     <span class="keyword">end</span>
+0060 <span class="keyword">end</span>
+0061 <span class="comment">% Open file handle</span>
+0062 fid = fopen([path filename], <span class="string">'r'</span>);
+0063 
+0064 <span class="comment">%% Setup...</span>
+0065 n = 1; <span class="comment">% An odd-even ticker</span>
+0066 m = 1; <span class="comment">% The row index for time and compass</span>
+0067 j = 1; <span class="comment">% The data row index</span>
+0068 
+0069 <span class="comment">% Preallocate some memory:</span>
+0070 data = zeros(200000,3);
+0071 time = zeros(200,4);
+0072 compass = zeros(200,4);
+0073 
+0074 tline = fgetl(fid);
+0075 <span class="keyword">while</span> tline~=-1
+0076     <span class="comment">% If it degins with 'H' is is the status line, with date/time info...</span>
+0077     <span class="keyword">if</span> tline(1) == <span class="string">'H'</span>
+0078         <span class="comment">% If 'n' is odd (1,3,5,...) then it is a 'start' time so it gets</span>
+0079         <span class="comment">% written to column 1 and the index gets writen to column 2.</span>
+0080         <span class="comment">% Furthermore, the next line is 'compass' / status information...</span>
+0081         <span class="comment">% We read this now with a new call to fgetl, rather than have it</span>
+0082         <span class="comment">% get mixed up the with other data and have to extract it later</span>
+0083         
+0084         <span class="comment">% If 'n' is even then it is a 'end' time. This gets written to</span>
+0085         <span class="comment">% column 3 and the index to column 4. Also we increment 'm' so that</span>
+0086         <span class="comment">% the next encounter gets writen to the correct row.</span>
+0087         <span class="keyword">if</span>(bitget(abs(n),1)) <span class="comment">% Is odd</span>
+0088             time(m,1) = datenum(tline(6:end),<span class="string">'dd:mm:HH:MM:SS'</span>);
+0089             time(m,2) = j; <span class="comment">% j is an index into the 'data' object</span>
+0090             tline = fgetl(fid);
+0091             compass(m,1:3) = str2num(tline);
+0092             compass(m,4) = j;
+0093         <span class="keyword">else</span> <span class="comment">% Is even</span>
+0094             time(m,3) = datenum(tline(6:end),<span class="string">'dd:mm:HH:MM:SS'</span>);
+0095             time(m,4) = j-1; <span class="comment">% j is an index into the 'data' object</span>
+0096             m = m + 1; <span class="comment">% Increment 'm'</span>
+0097         <span class="keyword">end</span>
+0098         <span class="comment">% Increment n (this needs to happen everytime to keep the odd/even</span>
+0099         <span class="comment">% marker ticking over</span>
+0100         n = n + 1;
+0101     <span class="keyword">else</span>
+0102         data(j,1:3) = str2num(tline);
+0103         j = j + 1;
+0104     <span class="keyword">end</span>
+0105     <span class="comment">% If preallocated space is getting low, top it up!</span>
+0106     <span class="comment">% NB: This is probably not needed as MATLAB dynmically exapnd matrixes</span>
+0107     <span class="comment">% that are indexed beyond their limits (e.g. x=[];x(3,2)=2;) but it</span>
+0108     <span class="comment">% might be more efficient</span>
+0109     <span class="keyword">if</span> j &gt; length(data)
+0110         data(j:j+199999,1:3) = zeros(200000,3); <span class="comment">% Add more data if needed...</span>
+0111     <span class="keyword">end</span>
+0112     <span class="keyword">if</span> m &gt; length(time) <span class="comment">% NB: 'time' and 'compass' should be the same length!</span>
+0113         time(n:n+199,1:4) = zeros(200,4);
+0114         compass(m:m+199,1:4) = zeros(200,4);
+0115     <span class="keyword">end</span>
+0116     <span class="comment">% Read a new line and repeat!</span>
+0117     tline = fgetl(fid);
+0118 <span class="keyword">end</span>
+0119 fclose(fid);
+0120 
+0121 <span class="comment">% Clean up unused pre-allocated space!</span>
+0122 data = data(1:j-1,:);
+0123 time = time(1:m-1,:);
+0124 compass = compass(1:m-1,:);
+0125 
+0126 disp(<span class="string">'All data read from file...'</span>)
+0127 
+0128 <span class="comment">%% Setup return object</span>
+0129 wave_data.path = path;
+0130 wave_data.filename = filename;
+0131 wave_data.compass = compass;
+0132 wave_data.time = time;
+0133 wave_data.raw_data = data;
+0134 
+0135 
+0136 <span class="comment">%% Split into separate files and write out</span>
+0137 <span class="keyword">for</span> n = 1:length(time); 
+0138     M = data(time(n,2):time(n,4),1:3); <span class="comment">% Use the start/stop time indexes</span>
+0139     <span class="comment">%name = [filename(1:end-4),'_chunk_',num2str(n),'.dat'];</span>
+0140     <span class="comment">%dlmwrite(name, M, 'precision', '%.6f','newline', 'pc');</span>
+0141     wave_data.burst_data.([<span class="string">'burst_'</span>,num2str(n)]) = M;
+0142 <span class="keyword">end</span>;
+0143 disp(<span class="string">'Individual bursts extracted...'</span>)
+0144 
+0145 <span class="comment">%% Finally, be a good lad: Go home...</span>
+0146 cd(old_path)
+0147 disp(<span class="string">'Done!'</span>)
+0148 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Thu 29-May-2014 21:29:53 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

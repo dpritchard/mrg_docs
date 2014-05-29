@@ -15,7 +15,7 @@
 <div><a href="../../index.html">Home</a> &gt;  <a href="#">mrg</a> &gt; <a href="index.html">MRG_MIKE</a> &gt; mrg_create_dfsu.m</div>
 
 <!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
-<td align="right"><a href="index.html">Index for mrg\MRG_MIKE&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+<td align="right"><a href="index.html">Index for mrg/MRG_MIKE&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
 
 <h1>mrg_create_dfsu
 </h1>
@@ -96,7 +96,7 @@
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
 This function calls:
 <ul style="list-style-image:url(../../matlabicon.gif)">
-<li><a href="mrg_effing_factory.html" class="code" title="function factory = mrg_effing_factory()">mrg_effing_factory</a>	Load the f**king factory.</li></ul>
+</ul>
 This function is called by:
 <ul style="list-style-image:url(../../matlabicon.gif)">
 </ul>
@@ -214,73 +214,75 @@ This function is called by:
 0107 <span class="keyword">end</span>
 0108 <span class="comment">%%</span>
 0109 NET.addAssembly(<span class="string">'DHI.Generic.MikeZero'</span>);
-0110 import DHI.Generic.MikeZero.*
-0111 import DHI.Generic.MikeZero.DFS.*;
-0112 import DHI.Generic.MikeZero.DFS.dfsu.*;
-0113 
-0114 <span class="comment">%% Get mesh</span>
-0115 return_path = cd;
-0116 [filename, path] = uigetfile(<span class="string">'.mesh'</span>,<span class="string">'Select a MESH file to act as DFSU template'</span>);
-0117 cd(path);
-0118 
-0119 [Elmts,Nodes,proj] = mzReadMesh(filename);
-0120 X = Nodes(:,1);
-0121 Y = Nodes(:,2);
-0122 Z = Nodes(:,3);
-0123 code = Nodes(:,4);
-0124 
-0125 <span class="comment">%% If area is requested, calculate element centered waterdepths</span>
-0126 <span class="comment">% There is some discrepenacy here between this and the values form the</span>
-0127 <span class="comment">% model...  Anyway.  It'll do for now.</span>
-0128 <span class="keyword">if</span> isarea
-0129     [~,~,ze] = mzCalcElmtCenterCoords(Elmts,X,Y,Z);
-0130     twd = ze*-1;
-0131     twd(twd&lt;0) = 0;
-0132 <span class="keyword">end</span>
-0133 
-0134 <span class="comment">%% Create a new empty dfsu file object</span>
-0135 factory = <a href="mrg_effing_factory.html" class="code" title="function factory = mrg_effing_factory()">mrg_effing_factory</a>();
-0136 builder = DfsuBuilder.Create(DfsuFileType.Dfsu2D);
-0137 
-0138 <span class="comment">% Create a temporal definition matching input file</span>
-0139 start = System.DateTime(start_date(1),start_date(2),start_date(3),start_date(4),start_date(5),start_date(6));
-0140 builder.SetTimeInfo(start, timestep_sec);
-0141 
-0142 <span class="comment">% Create a spatial defition based on mesh input file</span>
-0143 builder.SetNodes(NET.convertArray(single(X)),NET.convertArray(single(Y)),NET.convertArray(single(Z)),NET.convertArray(int32(code)));
-0144 builder.SetElements(mzNetToElmtArray(Elmts));
-0145 builder.SetProjection(factory.CreateProjection(proj))
-0146 
-0147 <span class="comment">% Add item(s)</span>
-0148 <span class="keyword">for</span> a = 1:nitems
-0149     builder.AddDynamicItem([<span class="string">'MATLAB_generated_'</span>,num2str(a)],DHI.Generic.MikeZero.eumQuantity(eumItem.eumIItemUndefined,eumUnit.eumUUnitUndefined));
-0150 <span class="keyword">end</span>
-0151 
-0152 <span class="comment">% Create the file - make it ready for data</span>
-0153 new_filename = [filename(1:end-5),<span class="string">'_mod.dfsu'</span>];
-0154 [filename, path] = uiputfile(<span class="string">'.dfsu'</span>, <span class="string">'Select a location for the DFSU file'</span>, new_filename);
-0155 cd(path)
-0156 dfs = builder.CreateFile(filename);
-0157 
-0158 <span class="comment">%% Put some data in the file</span>
-0159 <span class="keyword">for</span> i=0:ntimesteps-1
-0160     <span class="comment">% NB: The first timestep is just filled with base (becuase the</span>
-0161     <span class="comment">% increment is multiplied by 'i' which is zero)</span>
-0162     data = repmat(base,dfs.NumberOfElements,1)+increment*i;
-0163     <span class="keyword">for</span> j=1:nitems
-0164         <span class="comment">% NB: All items get the same data, unless isarea is true!</span>
-0165         <span class="keyword">if</span> j==1&amp;&amp;isarea==1
-0166             dfs.WriteItemTimeStepNext(0, NET.convertArray(single(twd)));
-0167         <span class="keyword">else</span>
-0168             dfs.WriteItemTimeStepNext(0, NET.convertArray(single(data)));
-0169         <span class="keyword">end</span>
-0170     <span class="keyword">end</span>
-0171 <span class="keyword">end</span>
-0172 
-0173 <span class="comment">% Close the file</span>
-0174 dfs.Close();
-0175 cd(return_path)
-0176 <span class="keyword">end</span></pre></div>
-<hr><address>Generated on Mon 28-Oct-2013 13:07:18 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+0110 NET.addAssembly(<span class="string">'DHI.Generic.MikeZero.EUM'</span>);
+0111 import DHI.Generic.MikeZero.*
+0112 import DHI.Generic.MikeZero.DFS.*;
+0113 import DHI.Generic.MikeZero.DFS.dfsu.*;
+0114 
+0115 <span class="comment">%% Get mesh</span>
+0116 return_path = cd;
+0117 [filename, path] = uigetfile(<span class="string">'.mesh'</span>,<span class="string">'Select a MESH file to act as DFSU template'</span>);
+0118 cd(path);
+0119 
+0120 [Elmts,Nodes,proj] = mzReadMesh(filename);
+0121 X = Nodes(:,1);
+0122 Y = Nodes(:,2);
+0123 Z = Nodes(:,3);
+0124 code = Nodes(:,4);
+0125 
+0126 <span class="comment">%% If area is requested, calculate element centered waterdepths</span>
+0127 <span class="comment">% There is some discrepenacy here between this and the values form the</span>
+0128 <span class="comment">% model...  Anyway.  It'll do for now.</span>
+0129 <span class="keyword">if</span> isarea
+0130     [~,~,ze] = mzCalcElmtCenterCoords(Elmts,X,Y,Z);
+0131     twd = ze*-1;
+0132     twd(twd&lt;0) = 0;
+0133 <span class="keyword">end</span>
+0134 
+0135 <span class="comment">%% Create a new empty dfsu file object</span>
+0136 <span class="comment">%factory = mrg_effing_factory();</span>
+0137 factory = DfsFactory();
+0138 builder = DfsuBuilder.Create(DfsuFileType.Dfsu2D);
+0139 
+0140 <span class="comment">% Create a temporal definition matching input file</span>
+0141 start = System.DateTime(start_date(1),start_date(2),start_date(3),start_date(4),start_date(5),start_date(6));
+0142 builder.SetTimeInfo(start, timestep_sec);
+0143 
+0144 <span class="comment">% Create a spatial defition based on mesh input file</span>
+0145 builder.SetNodes(NET.convertArray(single(X)),NET.convertArray(single(Y)),NET.convertArray(single(Z)),NET.convertArray(int32(code)));
+0146 builder.SetElements(mzNetToElmtArray(Elmts));
+0147 builder.SetProjection(factory.CreateProjection(proj))
+0148 
+0149 <span class="comment">% Add item(s)</span>
+0150 <span class="keyword">for</span> a = 1:nitems
+0151     builder.AddDynamicItem([<span class="string">'MATLAB_generated_'</span>,num2str(a)],DHI.Generic.MikeZero.eumQuantity(eumItem.eumIItemUndefined,eumUnit.eumUUnitUndefined));
+0152 <span class="keyword">end</span>
+0153 
+0154 <span class="comment">% Create the file - make it ready for data</span>
+0155 new_filename = [filename(1:end-5),<span class="string">'_mod.dfsu'</span>];
+0156 [filename, path] = uiputfile(<span class="string">'.dfsu'</span>, <span class="string">'Select a location for the DFSU file'</span>, new_filename);
+0157 cd(path)
+0158 dfs = builder.CreateFile(filename);
+0159 
+0160 <span class="comment">%% Put some data in the file</span>
+0161 <span class="keyword">for</span> i=0:ntimesteps-1
+0162     <span class="comment">% NB: The first timestep is just filled with base (becuase the</span>
+0163     <span class="comment">% increment is multiplied by 'i' which is zero)</span>
+0164     data = repmat(base,dfs.NumberOfElements,1)+increment*i;
+0165     <span class="keyword">for</span> j=1:nitems
+0166         <span class="comment">% NB: All items get the same data, unless isarea is true!</span>
+0167         <span class="keyword">if</span> j==1&amp;&amp;isarea==1
+0168             dfs.WriteItemTimeStepNext(0, NET.convertArray(single(twd)));
+0169         <span class="keyword">else</span>
+0170             dfs.WriteItemTimeStepNext(0, NET.convertArray(single(data)));
+0171         <span class="keyword">end</span>
+0172     <span class="keyword">end</span>
+0173 <span class="keyword">end</span>
+0174 
+0175 <span class="comment">% Close the file</span>
+0176 dfs.Close();
+0177 cd(return_path)
+0178 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Thu 29-May-2014 21:29:53 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
 </body>
 </html>

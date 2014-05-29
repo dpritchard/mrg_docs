@@ -1,0 +1,198 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of mrg_gofstat2xls</title>
+  <meta name="keywords" content="mrg_gofstat2xls">
+  <meta name="description" content="This function provides a simple output of the goodness-of-fit statistics">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">mrg</a> &gt; <a href="index.html">MRG_modelcomp</a> &gt; mrg_gofstat2xls.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for mrg/MRG_modelcomp&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>mrg_gofstat2xls
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>This function provides a simple output of the goodness-of-fit statistics</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function mrg_gofstat2xls(gofstat) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> This function provides a simple output of the goodness-of-fit statistics 
+ as given by mrg_gofstat in structure format to xlsx file in a simple 
+ sheet format with some commenting and headers. 
+
+ INPUT
+   gofstat as provided by mrg_gofstat or mrg_dfs0_gofstat
+
+ OUTPUT
+    The excel file with two colums if one data set is used, or else more
+
+ USAGE
+   Simply get the gofstat output from mrg_gofstat and run the function,
+   e.g.
+
+   out = mrg_dfs0_gofstat
+   mrg_gofstat2xls(out)
+
+ OCTAVE COMPATIBILITY
+   Untested.
+
+ AUTHORS
+   Bjoern Elsaesser @ QUB
+
+ LICENCE
+   Code distributed as part of the MRG toolbox from the Marine Research
+   Group at Queens Univeristy Belfast (QUB) School of Planning
+   Architecture and Civil Engineering (SPACE). Distributed under a
+   creative commons CC BY-SA licence, retaining full copyright of the
+   original authors.
+
+   http://creativecommons.org/licenses/by-sa/3.0/
+   http://www.qub.ac.uk/space/
+   http://www.qub.ac.uk/research-centres/eerc/
+
+ DEVELOPMENT
+   v 1.0   2013-11-28
+           First version. BE
+
+ TODO
+   Make code prettier and faster
+
+
+% not much to it!</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function mrg_gofstat2xls(gofstat)</a>
+0002 <span class="comment">% This function provides a simple output of the goodness-of-fit statistics</span>
+0003 <span class="comment">% as given by mrg_gofstat in structure format to xlsx file in a simple</span>
+0004 <span class="comment">% sheet format with some commenting and headers.</span>
+0005 <span class="comment">%</span>
+0006 <span class="comment">% INPUT</span>
+0007 <span class="comment">%   gofstat as provided by mrg_gofstat or mrg_dfs0_gofstat</span>
+0008 <span class="comment">%</span>
+0009 <span class="comment">% OUTPUT</span>
+0010 <span class="comment">%    The excel file with two colums if one data set is used, or else more</span>
+0011 <span class="comment">%</span>
+0012 <span class="comment">% USAGE</span>
+0013 <span class="comment">%   Simply get the gofstat output from mrg_gofstat and run the function,</span>
+0014 <span class="comment">%   e.g.</span>
+0015 <span class="comment">%</span>
+0016 <span class="comment">%   out = mrg_dfs0_gofstat</span>
+0017 <span class="comment">%   mrg_gofstat2xls(out)</span>
+0018 <span class="comment">%</span>
+0019 <span class="comment">% OCTAVE COMPATIBILITY</span>
+0020 <span class="comment">%   Untested.</span>
+0021 <span class="comment">%</span>
+0022 <span class="comment">% AUTHORS</span>
+0023 <span class="comment">%   Bjoern Elsaesser @ QUB</span>
+0024 <span class="comment">%</span>
+0025 <span class="comment">% LICENCE</span>
+0026 <span class="comment">%   Code distributed as part of the MRG toolbox from the Marine Research</span>
+0027 <span class="comment">%   Group at Queens Univeristy Belfast (QUB) School of Planning</span>
+0028 <span class="comment">%   Architecture and Civil Engineering (SPACE). Distributed under a</span>
+0029 <span class="comment">%   creative commons CC BY-SA licence, retaining full copyright of the</span>
+0030 <span class="comment">%   original authors.</span>
+0031 <span class="comment">%</span>
+0032 <span class="comment">%   http://creativecommons.org/licenses/by-sa/3.0/</span>
+0033 <span class="comment">%   http://www.qub.ac.uk/space/</span>
+0034 <span class="comment">%   http://www.qub.ac.uk/research-centres/eerc/</span>
+0035 <span class="comment">%</span>
+0036 <span class="comment">% DEVELOPMENT</span>
+0037 <span class="comment">%   v 1.0   2013-11-28</span>
+0038 <span class="comment">%           First version. BE</span>
+0039 <span class="comment">%</span>
+0040 <span class="comment">% TODO</span>
+0041 <span class="comment">%   Make code prettier and faster</span>
+0042 <span class="comment">%</span>
+0043 <span class="comment">%</span>
+0044 <span class="comment">%% not much to it!</span>
+0045 
+0046 <span class="comment">% define the excel file for the data to be written to</span>
+0047 [FileName,PathName,FilterIndex] = uiputfile(<span class="string">'*.xlsx'</span>,<span class="string">'Choose filename for data'</span>,<span class="string">'GoF_Stat.xlsx'</span>);
+0048 
+0049 cd(PathName);
+0050 
+0051 <span class="comment">% write correlation data</span>
+0052 text = {<span class="string">'Correlation coefficient (R)'</span>};
+0053 xlswrite(FileName,text,<span class="string">'Corr'</span>,<span class="string">'A1'</span>);
+0054 text = {<span class="string">'Lower 95% confidence limit on R'</span>};
+0055 xlswrite(FileName,text,<span class="string">'Corr'</span>,<span class="string">'A2'</span>);
+0056 text = {<span class="string">'Upper 95% confidence limit on R'</span>};
+0057 xlswrite(FileName,text,<span class="string">'Corr'</span>,<span class="string">'A3'</span>);
+0058 text = {<span class="string">'p-value on R'</span>};
+0059 xlswrite(FileName,text,<span class="string">'Corr'</span>,<span class="string">'A4'</span>);
+0060 xlswrite(FileName,gofstat.corr.',<span class="string">'Corr'</span>,<span class="string">'B1'</span>);
+0061 
+0062 <span class="comment">% write bias data</span>
+0063 text = {<span class="string">'NaN Mean of the pairwise differences'</span>};
+0064 xlswrite(FileName,text,<span class="string">'Corr'</span>,<span class="string">'A5'</span>);
+0065 text = {<span class="string">'NaN Mean of the absolute pairwise differences'</span>};
+0066 xlswrite(FileName,text,<span class="string">'Corr'</span>,<span class="string">'A6'</span>);
+0067 text = {<span class="string">'Standard Deviation of pairwise differences'</span>};
+0068 xlswrite(FileName,text,<span class="string">'Corr'</span>,<span class="string">'A7'</span>);
+0069 text = {<span class="string">'Bias-index - bias / mean'</span>};
+0070 xlswrite(FileName,text,<span class="string">'Corr'</span>,<span class="string">'A8'</span>);
+0071 xlswrite(FileName,gofstat.bias.',<span class="string">'Corr'</span>,<span class="string">'B5'</span>);
+0072 
+0073 <span class="comment">% write RMS data</span>
+0074 text = {<span class="string">'root mean square'</span>};
+0075 xlswrite(FileName,text,<span class="string">'Corr'</span>,<span class="string">'A9'</span>);
+0076 text = {<span class="string">'scatter index (RMS/Obar)'</span>};
+0077 xlswrite(FileName,text,<span class="string">'Corr'</span>,<span class="string">'A10'</span>);
+0078 text = {<span class="string">'scatter index using abs of signal (RMS/abs(Obar))'</span>};
+0079 xlswrite(FileName,text,<span class="string">'Corr'</span>,<span class="string">'A11'</span>);
+0080 text = {<span class="string">'stdev of the differences (different to bias stdev)'</span>};
+0081 xlswrite(FileName,text,<span class="string">'Corr'</span>,<span class="string">'A12'</span>);
+0082 xlswrite(FileName,gofstat.RMS.',<span class="string">'Corr'</span>,<span class="string">'B9'</span>);
+0083 
+0084 <span class="comment">% write remaining stats of means</span>
+0085 xlswrite(FileName,gofstat.Pbar.',<span class="string">'Corr'</span>,<span class="string">'B13'</span>);
+0086 text = {<span class="string">'Pbar : The nanmean of Pred'</span>};
+0087 xlswrite(FileName,text,<span class="string">'Corr'</span>,<span class="string">'A13'</span>);
+0088 xlswrite(FileName,gofstat.Obar.',<span class="string">'Corr'</span>,<span class="string">'B14'</span>);
+0089 text = {<span class="string">'Obar : The nanmean of Obs'</span>};
+0090 xlswrite(FileName,text,<span class="string">'Corr'</span>,<span class="string">'A14'</span>);
+0091 xlswrite(FileName,gofstat.absPbar.',<span class="string">'Corr'</span>,<span class="string">'B15'</span>);
+0092 text = {<span class="string">'absPbar : The nanmean of abs(Pred)'</span>};
+0093 xlswrite(FileName,text,<span class="string">'Corr'</span>,<span class="string">'A15'</span>);
+0094 xlswrite(FileName,gofstat.absObar.',<span class="string">'Corr'</span>,<span class="string">'B16'</span>);
+0095 text = {<span class="string">'absObar : The nanmean of abs(Obs)'</span>};
+0096 xlswrite(FileName,text,<span class="string">'Corr'</span>,<span class="string">'A16'</span>);
+0097 
+0098 <span class="comment">% write remaining stats of goodness of fit</span>
+0099 xlswrite(FileName,gofstat.MEF.',<span class="string">'Corr'</span>,<span class="string">'B17'</span>);
+0100 text = {<span class="string">'MEF  : The modelling efficency as per Stow 2009'</span>};
+0101 xlswrite(FileName,text,<span class="string">'Corr'</span>,<span class="string">'A17'</span>);
+0102 xlswrite(FileName,gofstat.skill.',<span class="string">'Corr'</span>,<span class="string">'B18'</span>);
+0103 text = {<span class="string">'skill: The modelling skill as per Dias 2009'</span>};
+0104 xlswrite(FileName,text,<span class="string">'Corr'</span>,<span class="string">'A18'</span>);
+0105 xlswrite(FileName,gofstat.RI.',<span class="string">'Corr'</span>,<span class="string">'B19'</span>);
+0106 text = {<span class="string">'RI   : The reliability index'</span>};
+0107 xlswrite(FileName,text,<span class="string">'Corr'</span>,<span class="string">'A19'</span>);
+0108 
+0109 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Thu 29-May-2014 21:29:53 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>
