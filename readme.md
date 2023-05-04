@@ -1,5 +1,9 @@
-# mrg_docs
-This is the documentation for the [MRG MATLAB toolbox][mrg]. The contents of this repository are probably best browsed directly at the [MRG toolbox documentation pages][mrg_docs]. It is hosted here in a separate repository (not in an orphaned `gh-pages` branch, like GitHub [recommends][gh_docs]) because MATLAB insists on locking files (on Windows), which makes branch-switching in git a real pain.
+# mrg_docs (Archive)
+This is the documentation for the [MRG MATLAB toolbox][mrg]. 
+
+As of May 2022, it has been more than 7 years since anyone has interacted with this repository. The primary maintainer (Pritchard) hasn't used MATLAB since at least 2014. As a result, this repository is being archived. At some point in the future it will be deleted.
+
+The contents of this repository are probably best browsed directly at the [MRG toolbox documentation pages][mrg_docs]. It is hosted here in a separate repository (not in an orphaned `gh-pages` branch, like GitHub [recommends][gh_docs]) because MATLAB insists on locking files (on Windows), which makes branch-switching in git a real pain.
 
 ## How?
 The documentation itself is generated dynamically from the code using the brilliant [m2html][m2html] toolbox by Guillaume Flandin, using the following command:
